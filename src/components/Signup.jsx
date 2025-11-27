@@ -1,14 +1,17 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import { useAuth } from '../context/AuthContext';
 import './Signup.css';
 
 function Signup() {
   const [formData, setFormData] = useState({
     username: '',
     email: '',
-    password: ''
+    password: '',
+    phone: ''
   });
   const [message, setMessage] = useState('');
+  const [loading, setLoading] = useState(false);
+  const { signup } = useAuth();
 
   const handleChange = (e) => {
     setFormData({
@@ -19,12 +22,16 @@ function Signup() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    setMessage('');
     try {
-      const response = await axios.post('http://localhost:8081/api/auth/signup', formData);
-      setMessage(response.data);
-      setFormData({ username: '', email: '', password: '' });
+      const result = await signup(formData);
+      setMessage(result.message || 'Registration successful! You received 100 bonus loyalty points!');
+      setFormData({ username: '', email: '', password: '', phone: '' });
     } catch (error) {
-      setMessage(error.response?.data || 'Signup failed');
+      setMessage(error.response?.data?.message || 'Registration failed. Email may already exist.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -60,11 +67,24 @@ function Signup() {
             value={formData.password}
             onChange={handleChange}
             required
+            minLength="6"
           />
         </div>
-        <button type="submit">Sign Up</button>
+        <div className="form-group">
+          <label>Phone Number:</label>
+          <input
+            type="tel"
+            name="phone"
+            value={formData.phone}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <button type="submit" disabled={loading}>
+          {loading ? 'Registering...' : 'Sign Up'}
+        </button>
       </form>
-      {message && <p className="message">{message}</p>}
+      {message && <p className={message.includes('successful') ? 'message success' : 'message error'}>{message}</p>}
     </div>
   );
 }

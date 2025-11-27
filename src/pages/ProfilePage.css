@@ -1,0 +1,192 @@
+.profile-page {
+  min-height: 100vh;
+  background: linear-gradient(to bottom, #1a1a1a, #2d2d2d);
+  padding: 40px 20px;
+}
+
+.profile-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  background: #2d2d2d;
+  border-radius: 20px;
+  padding: 40px;
+  color: white;
+}
+
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  margin-bottom: 40px;
+  padding-bottom: 30px;
+  border-bottom: 2px solid #444;
+}
+
+.avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+  font-weight: bold;
+  color: white;
+}
+
+.user-info h1 {
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+  color: #667eea;
+}
+
+.email, .phone {
+  color: #aaa;
+  margin-bottom: 5px;
+}
+
+.loyalty-badge {
+  display: inline-block;
+  background: linear-gradient(135deg, #ffd700, #ffed4e);
+  color: #000;
+  padding: 10px 20px;
+  border-radius: 25px;
+  font-weight: bold;
+  margin-top: 15px;
+}
+
+.tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 30px;
+  border-bottom: 2px solid #444;
+}
+
+.tab {
+  padding: 15px 30px;
+  border: none;
+  background: transparent;
+  color: #aaa;
+  font-size: 1.1rem;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.tab:hover {
+  color: white;
+}
+
+.tab.active {
+  color: #667eea;
+  border-bottom-color: #667eea;
+}
+
+.tab-content {
+  min-height: 400px;
+}
+
+.profile-info h2, .bookings-list h2, .orders-list h2 {
+  font-size: 2rem;
+  color: #667eea;
+  margin-bottom: 30px;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 25px;
+  margin-bottom: 30px;
+}
+
+.info-item label {
+  display: block;
+  color: #999;
+  font-size: 0.9rem;
+  margin-bottom: 8px;
+}
+
+.info-item p {
+  color: white;
+  font-size: 1.2rem;
+}
+
+.loyalty-points {
+  color: #ffd700;
+  font-weight: bold;
+}
+
+.edit-btn {
+  padding: 15px 40px;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.edit-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+}
+
+.booking-card, .order-card {
+  background: #1a1a1a;
+  padding: 25px;
+  border-radius: 15px;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: transform 0.3s ease;
+}
+
+.booking-card:hover, .order-card:hover {
+  transform: translateX(10px);
+}
+
+.booking-info h3, .order-info h3 {
+  color: #667eea;
+  margin-bottom: 10px;
+}
+
+.booking-info p, .order-info p {
+  color: #aaa;
+  margin-bottom: 5px;
+}
+
+.booking-price, .order-price {
+  text-align: right;
+}
+
+.price {
+  font-size: 1.8rem;
+  color: #ffd700;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.view-ticket-btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.view-ticket-btn:hover {
+  transform: scale(1.05);
+}
+
+.no-data {
+  text-align: center;
+  color: #aaa;
+  font-size: 1.3rem;
+  margin-top: 50px;
+}
