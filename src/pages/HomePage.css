@@ -1,0 +1,133 @@
+.home-page {
+  min-height: 100vh;
+  background: linear-gradient(to bottom, #1a1a1a, #2d2d2d);
+  padding: 40px 20px;
+}
+
+.hero-section {
+  text-align: center;
+  color: white;
+  margin-bottom: 50px;
+  padding: 40px 20px;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.2), rgba(118, 75, 162, 0.2));
+  border-radius: 20px;
+}
+
+.hero-section h1 {
+  font-size: 3rem;
+  margin-bottom: 20px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.loyalty-info {
+  font-size: 1.5rem;
+  color: #ffd700;
+  font-weight: bold;
+}
+
+.movies-section {
+  max-width: 1400px;
+  margin: 0 auto 60px;
+}
+
+.movies-section h2 {
+  color: white;
+  font-size: 2.5rem;
+  margin-bottom: 30px;
+  padding-left: 20px;
+}
+
+.movies-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 30px;
+  padding: 0 20px;
+}
+
+.movie-card {
+  background: #2d2d2d;
+  border-radius: 15px;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+}
+
+.movie-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 20px 40px rgba(102, 126, 234, 0.3);
+}
+
+.movie-card img {
+  width: 100%;
+  height: 400px;
+  object-fit: cover;
+}
+
+.movie-info {
+  padding: 20px;
+  color: white;
+}
+
+.movie-info h3 {
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+  color: #667eea;
+}
+
+.movie-genre {
+  color: #999;
+  margin-bottom: 8px;
+}
+
+.movie-rating, .movie-duration, .movie-release {
+  color: #ccc;
+  margin-bottom: 5px;
+  font-size: 0.95rem;
+}
+
+.book-now-btn, .notify-btn {
+  width: 100%;
+  padding: 12px;
+  margin-top: 15px;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: block;
+  text-align: center;
+}
+
+.book-now-btn:hover, .notify-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+}
+
+.notify-btn {
+  background: linear-gradient(135deg, #f093fb, #f5576c);
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  font-size: 2rem;
+  color: white;
+  background: #1a1a1a;
+}
+
+.no-movies {
+  text-align: center;
+  color: #999;
+  font-size: 1.2rem;
+  padding: 40px;
+  grid-column: 1 / -1;
+}

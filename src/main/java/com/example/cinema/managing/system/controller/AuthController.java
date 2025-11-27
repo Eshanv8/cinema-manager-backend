@@ -1,15 +1,21 @@
 package com.example.cinema.managing.system.controller;
 
+import com.example.cinema.managing.system.dto.*;
 import com.example.cinema.managing.system.model.User;
 import com.example.cinema.managing.system.repository.UserRepository;
+import com.example.cinema.managing.system.security.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = "http://localhost:3000") // Allow React to access
+@CrossOrigin(origins = "http://localhost:3000")
 public class AuthController {
 
     @Autowired
@@ -18,27 +24,81 @@ public class AuthController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    // SIGNUP API
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private JwtTokenProvider tokenProvider;
+
     @PostMapping("/signup")
-    public ResponseEntity<?> signup(@RequestBody User user) {
-        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
-            return ResponseEntity.badRequest().body("Email already exists");
+    public ResponseEntity<?> signup(@RequestBody SignupRequest signupRequest) {
+        if (userRepository.findByEmail(signupRequest.getEmail()).isPresent()) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Email already exists"));
         }
-        user.setRole("USER"); // Default role
-        user.setPassword(passwordEncoder.encode(user.getPassword())); // Hash password
+
+        User user = new User();
+        user.setUsername(signupRequest.getUsername());
+        user.setEmail(signupRequest.getEmail());
+        user.setPassword(passwordEncoder.encode(signupRequest.getPassword()));
+        user.setPhone(signupRequest.getPhone());
+        user.setRole("USER");
+        user.setLoyaltyPoints(100); // Welcome bonus
+        
         userRepository.save(user);
-        return ResponseEntity.ok("User registered successfully");
+        return ResponseEntity.ok(new MessageResponse("User registered successfully! Welcome bonus: 100 points"));
     }
 
-    // LOGIN API
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody User user) {
-        User dbUser = userRepository.findByEmail(user.getEmail()).orElse(null);
-        
-        // Check password with BCrypt
-        if (dbUser != null && passwordEncoder.matches(user.getPassword(), dbUser.getPassword())) {
-            return ResponseEntity.ok(dbUser); // Return user info to frontend
+    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        loginRequest.getEmail(),
+                        loginRequest.getPassword()
+                )
+        );
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        String jwt = tokenProvider.generateToken(authentication);
+
+        User user = userRepository.findByEmail(loginRequest.getEmail())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        return ResponseEntity.ok(new JwtResponse(
+                jwt,
+                user.getId(),
+                user.getUsername(),
+                user.getEmail(),
+                user.getRole(),
+                user.getLoyaltyPoints()
+        ));
+    }
+
+    @PostMapping("/admin/login")
+    public ResponseEntity<?> adminLogin(@RequestBody LoginRequest loginRequest) {
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        loginRequest.getEmail(),
+                        loginRequest.getPassword()
+                )
+        );
+
+        User user = userRepository.findByEmail(loginRequest.getEmail())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (!"ADMIN".equals(user.getRole())) {
+            return ResponseEntity.status(403).body(new MessageResponse("Access denied. Admin role required."));
         }
-        return ResponseEntity.status(401).body("Invalid credentials");
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        String jwt = tokenProvider.generateToken(authentication);
+
+        return ResponseEntity.ok(new JwtResponse(
+                jwt,
+                user.getId(),
+                user.getUsername(),
+                user.getEmail(),
+                user.getRole(),
+                user.getLoyaltyPoints()
+        ));
     }
 }

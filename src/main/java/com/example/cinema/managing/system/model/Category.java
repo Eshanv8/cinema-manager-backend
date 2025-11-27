@@ -5,35 +5,23 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.index.Indexed;
 import java.time.LocalDateTime;
 
-@Document(collection = "users")
+@Document(collection = "categories")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class User {
+public class Category {
     @Id
     private String id;
     
-    private String username;
+    private String name;
     
-    @Indexed(unique = true)
-    private String email;
+    private String description;
     
-    private String password;
-    
-    private String role; // "GUEST", "USER", "ADMIN"
-    
-    private String phone;
-    
-    private Integer loyaltyPoints = 0;
-    
-    private String profileImage;
+    private String icon;
     
     private LocalDateTime createdAt = LocalDateTime.now();
-    
-    private LocalDateTime updatedAt = LocalDateTime.now();
     
     private boolean active = true;
 }

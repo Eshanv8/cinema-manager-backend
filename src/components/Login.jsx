@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import { useAuth } from '../context/AuthContext';
 import './Login.css';
 
 function Login() {
@@ -8,6 +8,8 @@ function Login() {
     password: ''
   });
   const [message, setMessage] = useState('');
+  const [loading, setLoading] = useState(false);
+  const { login } = useAuth();
 
   const handleChange = (e) => {
     setFormData({
@@ -18,14 +20,23 @@ function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    setMessage('');
     try {
-      const response = await axios.post('http://localhost:8081/api/auth/login', formData);
-      setMessage('Login successful! Welcome ' + response.data.username);
-      console.log('User:', response.data);
-      // Store user data or redirect as needed
-      localStorage.setItem('user', JSON.stringify(response.data));
+      const userData = await login(formData);
+      setMessage(`Welcome back, ${userData.username}! You have ${userData.loyaltyPoints} loyalty points.`);
+      // Redirect based on role
+      setTimeout(() => {
+        if (userData.role === 'ADMIN') {
+          window.location.href = '/admin';
+        } else {
+          window.location.href = '/home';
+        }
+      }, 1000);
     } catch (error) {
-      setMessage(error.response?.data || 'Login failed');
+      setMessage(error.response?.data?.message || 'Invalid credentials');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -53,9 +64,11 @@ function Login() {
             required
           />
         </div>
-        <button type="submit">Login</button>
+        <button type="submit" disabled={loading}>
+          {loading ? 'Logging in...' : 'Login'}
+        </button>
       </form>
-      {message && <p className="message">{message}</p>}
+      {message && <p className={message.includes('Welcome') ? 'message success' : 'message error'}>{message}</p>}
     </div>
   );
 }
