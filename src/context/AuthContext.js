@@ -38,6 +38,11 @@ export const AuthProvider = ({ children }) => {
     return result;
   };
 
+  const adminSignup = async (userData) => {
+    const result = await authService.adminSignup(userData);
+    return result;
+  };
+
   const logout = () => {
     authService.logout();
     setUser(null);
@@ -49,6 +54,7 @@ export const AuthProvider = ({ children }) => {
     login,
     adminLogin,
     signup,
+    adminSignup,
     logout,
     isAuthenticated: authService.isAuthenticated(),
     isAdmin: authService.isAdmin()

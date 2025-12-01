@@ -9,6 +9,7 @@ import java.util.List;
 public interface FoodRepository extends MongoRepository<Food, String> {
     List<Food> findByActiveTrue();
     List<Food> findByCategory(String category);
+    List<Food> findByCategoryAndActiveTrue(String category);
     List<Food> findByComboTrue();
     List<Food> findTop10ByOrderBySalesCountDesc();
 }

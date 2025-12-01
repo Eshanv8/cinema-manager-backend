@@ -32,6 +32,39 @@
   font-weight: 500;
 }
 
+.admin-toggle {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.admin-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 20px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border-radius: 25px;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.admin-switch:hover {
+  transform: scale(1.05);
+  box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+}
+
+.admin-switch input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}
+
+.admin-switch span {
+  font-size: 1rem;
+}
+
 .toggle-buttons {
   display: flex;
   gap: 10px;

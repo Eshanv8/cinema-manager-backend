@@ -52,7 +52,6 @@
   border-radius: 15px;
   overflow: hidden;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-  cursor: pointer;
 }
 
 .movie-card:hover {
@@ -60,10 +59,55 @@
   box-shadow: 0 20px 40px rgba(102, 126, 234, 0.3);
 }
 
-.movie-card img {
+.movie-poster-container {
+  position: relative;
   width: 100%;
   height: 400px;
+  overflow: hidden;
+}
+
+.movie-poster-container img {
+  width: 100%;
+  height: 100%;
   object-fit: cover;
+}
+
+.trailer-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  cursor: pointer;
+  z-index: 1;
+}
+
+.movie-poster-container:hover .trailer-overlay {
+  opacity: 1;
+}
+
+.play-icon {
+  font-size: 4rem;
+  color: white;
+  margin-bottom: 10px;
+  transition: transform 0.3s ease;
+}
+
+.trailer-overlay:hover .play-icon {
+  transform: scale(1.2);
+}
+
+.trailer-overlay span {
+  color: white;
+  font-size: 1.2rem;
+  font-weight: bold;
 }
 
 .movie-info {
@@ -88,30 +132,122 @@
   font-size: 0.95rem;
 }
 
-.book-now-btn, .notify-btn {
-  width: 100%;
-  padding: 12px;
+.movie-actions {
+  display: flex;
+  gap: 10px;
   margin-top: 15px;
+}
+
+.book-now-btn, .trailer-btn {
+  flex: 1;
+  padding: 12px;
   border: none;
   border-radius: 8px;
-  background: linear-gradient(135deg, #667eea, #764ba2);
   color: white;
   font-size: 1rem;
   font-weight: bold;
   cursor: pointer;
   transition: all 0.3s ease;
   text-decoration: none;
-  display: block;
-  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.book-now-btn:hover, .notify-btn:hover {
+.book-now-btn {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+}
+
+.trailer-btn {
+  background: linear-gradient(135deg, #f093fb, #f5576c);
+}
+
+.book-now-btn:hover, .trailer-btn:hover {
   transform: scale(1.05);
   box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
 }
 
 .notify-btn {
+  width: 100%;
+  padding: 12px;
+  margin-top: 15px;
+  border: none;
+  border-radius: 8px;
   background: linear-gradient(135deg, #f093fb, #f5576c);
+  color: white;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.notify-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 5px 20px rgba(245, 87, 108, 0.4);
+}
+
+.trailer-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.trailer-modal-content {
+  background: #2d2d2d;
+  padding: 30px;
+  border-radius: 15px;
+  max-width: 900px;
+  width: 90%;
+  position: relative;
+}
+
+.trailer-modal-content h2 {
+  color: white;
+  margin-bottom: 20px;
+  font-size: 2rem;
+}
+
+.close-modal {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  font-size: 2rem;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.close-modal:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: rotate(90deg);
+}
+
+.video-container {
+  position: relative;
+  padding-bottom: 56.25%;
+  height: 0;
+  overflow: hidden;
+}
+
+.video-container iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
 }
 
 .loading-container {

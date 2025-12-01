@@ -73,6 +73,24 @@ public class AuthController {
         ));
     }
 
+    @PostMapping("/admin/signup")
+    public ResponseEntity<?> adminSignup(@RequestBody SignupRequest signupRequest) {
+        if (userRepository.findByEmail(signupRequest.getEmail()).isPresent()) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Email already exists"));
+        }
+
+        User admin = new User();
+        admin.setUsername(signupRequest.getUsername());
+        admin.setEmail(signupRequest.getEmail());
+        admin.setPassword(passwordEncoder.encode(signupRequest.getPassword()));
+        admin.setPhone(signupRequest.getPhone());
+        admin.setRole("ADMIN");
+        admin.setLoyaltyPoints(0);
+        
+        userRepository.save(admin);
+        return ResponseEntity.ok(new MessageResponse("Admin registered successfully!"));
+    }
+
     @PostMapping("/admin/login")
     public ResponseEntity<?> adminLogin(@RequestBody LoginRequest loginRequest) {
         Authentication authentication = authenticationManager.authenticate(
