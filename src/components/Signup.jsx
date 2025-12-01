@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import './Signup.css';
 
-function Signup() {
+function Signup({ isAdmin }) {
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -11,7 +11,7 @@ function Signup() {
   });
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
-  const { signup } = useAuth();
+  const { signup, adminSignup } = useAuth();
 
   const handleChange = (e) => {
     setFormData({
@@ -25,8 +25,8 @@ function Signup() {
     setLoading(true);
     setMessage('');
     try {
-      const result = await signup(formData);
-      setMessage(result.message || 'Registration successful! You received 100 bonus loyalty points!');
+      const result = isAdmin ? await adminSignup(formData) : await signup(formData);
+      setMessage(result.message || (isAdmin ? 'Admin registration successful!' : 'Registration successful! You received 100 bonus loyalty points!'));
       setFormData({ username: '', email: '', password: '', phone: '' });
     } catch (error) {
       setMessage(error.response?.data?.message || 'Registration failed. Email may already exist.');
@@ -37,7 +37,7 @@ function Signup() {
 
   return (
     <div className="signup-container">
-      <h2>Sign Up</h2>
+      <h2>{isAdmin ? 'Admin Sign Up' : 'Sign Up'}</h2>
       <form onSubmit={handleSubmit}>
         <div className="form-group">
           <label>Username:</label>

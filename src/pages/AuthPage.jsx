@@ -5,6 +5,7 @@ import './AuthPage.css';
 
 function AuthPage() {
   const [showLogin, setShowLogin] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   return (
     <div className="auth-page">
@@ -13,6 +14,18 @@ function AuthPage() {
           <h1>🎬 Cinema Management System</h1>
           <p className="subtitle">Your Gateway to Movie Magic</p>
         </div>
+        
+        <div className="admin-toggle">
+          <label className="admin-switch">
+            <input 
+              type="checkbox" 
+              checked={isAdmin} 
+              onChange={() => setIsAdmin(!isAdmin)}
+            />
+            <span>Admin Mode</span>
+          </label>
+        </div>
+
         <div className="toggle-buttons">
           <button 
             className={showLogin ? 'active' : ''} 
@@ -27,7 +40,7 @@ function AuthPage() {
             Sign Up
           </button>
         </div>
-        {showLogin ? <Login /> : <Signup />}
+        {showLogin ? <Login isAdmin={isAdmin} /> : <Signup isAdmin={isAdmin} />}
       </div>
     </div>
   );

@@ -45,6 +45,52 @@
   font-weight: bold;
 }
 
+/* Tab Navigation */
+.tab-navigation {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 30px;
+  border-bottom: 2px solid #444;
+  padding-bottom: 0;
+}
+
+.tab-btn {
+  padding: 15px 30px;
+  border: none;
+  border-radius: 10px 10px 0 0;
+  background: #2d2d2d;
+  color: white;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-bottom: 3px solid transparent;
+}
+
+.tab-btn:hover {
+  background: #3d3d3d;
+}
+
+.tab-btn.active {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border-bottom: 3px solid #ffd700;
+}
+
+.tab-content {
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .actions-bar {
   margin-bottom: 30px;
 }
@@ -86,7 +132,8 @@
 }
 
 .add-movie-form input,
-.add-movie-form textarea {
+.add-movie-form textarea,
+.add-movie-form select {
   width: 100%;
   padding: 15px;
   border: 2px solid #444;
@@ -97,9 +144,15 @@
 }
 
 .add-movie-form input:focus,
-.add-movie-form textarea:focus {
+.add-movie-form textarea:focus,
+.add-movie-form select:focus {
   outline: none;
   border-color: #667eea;
+}
+
+.add-movie-form select option {
+  background: #1a1a1a;
+  color: white;
 }
 
 .add-movie-form textarea {
@@ -214,4 +267,15 @@ th {
 .edit-btn-small:hover,
 .delete-btn-small:hover {
   transform: scale(1.1);
+}
+
+.trailer-link {
+  color: #667eea;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.trailer-link:hover {
+  color: #764ba2;
+  text-decoration: underline;
 }

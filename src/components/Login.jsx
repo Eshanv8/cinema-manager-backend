@@ -2,14 +2,14 @@ import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import './Login.css';
 
-function Login() {
+function Login({ isAdmin }) {
   const [formData, setFormData] = useState({
     email: '',
     password: ''
   });
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
+  const { login, adminLogin } = useAuth();
 
   const handleChange = (e) => {
     setFormData({
@@ -23,8 +23,8 @@ function Login() {
     setLoading(true);
     setMessage('');
     try {
-      const userData = await login(formData);
-      setMessage(`Welcome back, ${userData.username}! You have ${userData.loyaltyPoints} loyalty points.`);
+      const userData = isAdmin ? await adminLogin(formData) : await login(formData);
+      setMessage(`Welcome back, ${userData.username}!${userData.role === 'ADMIN' ? ' (Admin Access)' : ` You have ${userData.loyaltyPoints} loyalty points.`}`);
       // Redirect based on role
       setTimeout(() => {
         if (userData.role === 'ADMIN') {
@@ -42,7 +42,7 @@ function Login() {
 
   return (
     <div className="login-container">
-      <h2>Login</h2>
+      <h2>{isAdmin ? 'Admin Login' : 'Login'}</h2>
       <form onSubmit={handleSubmit}>
         <div className="form-group">
           <label>Email:</label>

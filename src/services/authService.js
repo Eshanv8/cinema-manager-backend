@@ -24,6 +24,11 @@ const authService = {
     return response.data;
   },
 
+  adminSignup: async (userData) => {
+    const response = await API.post('/auth/admin/signup', userData);
+    return response.data;
+  },
+
   logout: () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');

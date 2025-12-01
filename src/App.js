@@ -8,6 +8,7 @@ import MoviesPage from './pages/MoviesPage';
 import BookingPage from './pages/BookingPage';
 import AdminDashboard from './pages/AdminDashboard';
 import ProfilePage from './pages/ProfilePage';
+import TrailerPlayer from './components/TrailerPlayer';
 import Navbar from './components/Navbar';
 
 // Protected Route Component
@@ -50,6 +51,14 @@ function AppContent() {
           element={
             <ProtectedRoute>
               <MoviesPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/trailers"
+          element={
+            <ProtectedRoute>
+              <TrailerPlayer />
             </ProtectedRoute>
           }
         />

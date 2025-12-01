@@ -9,6 +9,7 @@ import java.util.List;
 public interface MerchandiseRepository extends MongoRepository<Merchandise, String> {
     List<Merchandise> findByActiveTrue();
     List<Merchandise> findByCategory(String category);
+    List<Merchandise> findByCategoryAndActiveTrue(String category);
     List<Merchandise> findByBundleTrue();
     List<Merchandise> findByBundleMovieId(String movieId);
     List<Merchandise> findTop10ByOrderBySalesCountDesc();

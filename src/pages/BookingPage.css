@@ -54,30 +54,79 @@
   color: #667eea;
 }
 
+.no-showtimes {
+  color: #999;
+  font-size: 1.1rem;
+  padding: 20px;
+  text-align: center;
+}
+
 .showtimes {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 15px;
-  flex-wrap: wrap;
 }
 
 .showtime-btn {
-  padding: 15px 30px;
+  padding: 20px;
   border: 2px solid #667eea;
-  background: transparent;
+  background: rgba(102, 126, 234, 0.1);
   color: white;
-  border-radius: 10px;
-  font-size: 1.1rem;
+  border-radius: 12px;
   cursor: pointer;
   transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  text-align: center;
 }
 
 .showtime-btn:hover {
   background: rgba(102, 126, 234, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
 }
 
 .showtime-btn.selected {
   background: linear-gradient(135deg, #667eea, #764ba2);
   border-color: transparent;
+  box-shadow: 0 5px 20px rgba(102, 126, 234, 0.5);
+}
+
+.showtime-date {
+  font-size: 0.9rem;
+  color: #aaa;
+  font-weight: 500;
+}
+
+.showtime-time {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: white;
+}
+
+.showtime-format {
+  font-size: 1rem;
+  color: #667eea;
+  font-weight: 600;
+}
+
+.showtime-screen {
+  font-size: 0.9rem;
+  color: #999;
+}
+
+.showtime-price {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #4ade80;
+  margin-top: 5px;
+}
+
+.seats-available {
+  font-size: 0.85rem;
+  color: #ccc;
+  margin-top: 5px;
 }
 
 .seat-selection h2 {

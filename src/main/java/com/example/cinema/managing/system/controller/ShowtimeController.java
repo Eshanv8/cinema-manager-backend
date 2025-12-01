@@ -1,0 +1,58 @@
+package com.example.cinema.managing.system.controller;
+
+import com.example.cinema.managing.system.model.Showtime;
+import com.example.cinema.managing.system.service.ShowtimeService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/showtimes")
+@CrossOrigin(origins = "*")
+public class ShowtimeController {
+
+    @Autowired
+    private ShowtimeService showtimeService;
+
+    @GetMapping
+    public ResponseEntity<List<Showtime>> getAllShowtimes() {
+        return ResponseEntity.ok(showtimeService.getAllShowtimes());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Showtime> getShowtimeById(@PathVariable String id) {
+        return ResponseEntity.ok(showtimeService.getShowtimeById(id));
+    }
+
+    @GetMapping("/movie/{movieId}")
+    public ResponseEntity<List<Showtime>> getShowtimesByMovieId(@PathVariable String movieId) {
+        return ResponseEntity.ok(showtimeService.getShowtimesByMovieId(movieId));
+    }
+
+    @GetMapping("/upcoming")
+    public ResponseEntity<List<Showtime>> getUpcomingShowtimes() {
+        return ResponseEntity.ok(showtimeService.getUpcomingShowtimes());
+    }
+
+    @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Showtime> createShowtime(@RequestBody Showtime showtime) {
+        return ResponseEntity.ok(showtimeService.createShowtime(showtime));
+    }
+
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Showtime> updateShowtime(@PathVariable String id, @RequestBody Showtime showtime) {
+        return ResponseEntity.ok(showtimeService.updateShowtime(id, showtime));
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> deleteShowtime(@PathVariable String id) {
+        showtimeService.deleteShowtime(id);
+        return ResponseEntity.ok().build();
+    }
+}
