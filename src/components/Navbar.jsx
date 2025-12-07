@@ -1,42 +1,97 @@
-import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import './Navbar.css';
 
 function Navbar() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const handleLogout = () => {
     logout();
     navigate('/');
   };
 
+  const isActive = (path) => {
+    return location.pathname === path;
+  };
+
+  const toggleMenu = () => {
+    setMenuOpen(!menuOpen);
+  };
+
   return (
     <nav className="navbar">
       <div className="nav-container">
         <Link to="/home" className="nav-logo">
-          🎬 Cinema
+          <span className="logo-icon">🎬</span>
+          <span className="logo-text">Cinema Palace</span>
         </Link>
-        <ul className="nav-menu">
+        
+        <button className="nav-toggle" onClick={toggleMenu}>
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+
+        <ul className={`nav-menu ${menuOpen ? 'active' : ''}`}>
           <li className="nav-item">
-            <Link to="/home" className="nav-link">Home</Link>
+            <Link 
+              to="/home" 
+              className={`nav-link ${isActive('/home') ? 'active' : ''}`}
+              onClick={() => setMenuOpen(false)}
+            >
+              <span className="nav-icon">🏠</span>
+              Home
+            </Link>
           </li>
           <li className="nav-item">
-            <Link to="/movies" className="nav-link">Movies</Link>
+            <Link 
+              to="/movies" 
+              className={`nav-link ${isActive('/movies') ? 'active' : ''}`}
+              onClick={() => setMenuOpen(false)}
+            >
+              <span className="nav-icon">🎥</span>
+              Movies
+            </Link>
+          </li>
+          <li className="nav-item">
+            <Link 
+              to="/bookings" 
+              className={`nav-link ${isActive('/bookings') ? 'active' : ''}`}
+              onClick={() => setMenuOpen(false)}
+            >
+              <span className="nav-icon">🎫</span>
+              My Bookings
+            </Link>
           </li>
           {user?.role === 'ADMIN' && (
             <li className="nav-item">
-              <Link to="/admin" className="nav-link">Admin</Link>
+              <Link 
+                to="/admin" 
+                className={`nav-link admin-link ${isActive('/admin') ? 'active' : ''}`}
+                onClick={() => setMenuOpen(false)}
+              >
+                <span className="nav-icon">⚙️</span>
+                Admin
+              </Link>
             </li>
           )}
           <li className="nav-item">
-            <Link to="/profile" className="nav-link">
-              👤 {user?.username} ({user?.loyaltyPoints} pts)
+            <Link 
+              to="/profile" 
+              className={`nav-link ${isActive('/profile') ? 'active' : ''}`}
+              onClick={() => setMenuOpen(false)}
+            >
+              <span className="nav-icon">👤</span>
+              {user?.username}
             </Link>
           </li>
           <li className="nav-item">
             <button onClick={handleLogout} className="nav-logout">
+              <span className="logout-icon">🚪</span>
               Logout
             </button>
           </li>

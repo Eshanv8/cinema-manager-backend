@@ -37,6 +37,11 @@ public class ShowtimeController {
         return ResponseEntity.ok(showtimeService.getUpcomingShowtimes());
     }
 
+    @GetMapping("/available")
+    public ResponseEntity<List<Showtime>> getAvailableShowtimes() {
+        return ResponseEntity.ok(showtimeService.getAllShowtimes());
+    }
+
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Showtime> createShowtime(@RequestBody Showtime showtime) {

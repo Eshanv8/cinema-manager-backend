@@ -7,6 +7,7 @@
   align-items: center;
   color: white;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  padding-top: 80px; /* Add padding for fixed navbar */
 }
 
 .container {
