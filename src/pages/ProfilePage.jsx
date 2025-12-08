@@ -32,9 +32,6 @@ function ProfilePage() {
             <h1>{user?.username}</h1>
             <p className="email">{user?.email}</p>
             <p className="phone">{user?.phone}</p>
-            <div className="loyalty-badge">
-              ⭐ {user?.loyaltyPoints} Loyalty Points
-            </div>
           </div>
         </div>
 
@@ -79,10 +76,6 @@ function ProfilePage() {
                 <div className="info-item">
                   <label>Role</label>
                   <p>{user?.role}</p>
-                </div>
-                <div className="info-item">
-                  <label>Loyalty Points</label>
-                  <p className="loyalty-points">{user?.loyaltyPoints} points</p>
                 </div>
                 <div className="info-item">
                   <label>Member Since</label>

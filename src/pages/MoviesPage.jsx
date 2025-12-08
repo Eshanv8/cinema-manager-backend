@@ -10,8 +10,7 @@ function MoviesPage() {
   const [selectedGenre, setSelectedGenre] = useState('All');
   const [loading, setLoading] = useState(true);
   const [selectedTrailer, setSelectedTrailer] = useState(null);
-
-  const genres = ['All', 'Action', 'Comedy', 'Drama', 'Horror', 'Sci-Fi', 'Romance', 'Thriller', 'Animation'];
+  const [genres, setGenres] = useState(['All']);
 
   useEffect(() => {
     loadMovies();
@@ -24,10 +23,23 @@ function MoviesPage() {
   const loadMovies = async () => {
     try {
       const response = await movieService.getAllMovies();
-      // The service already returns response.data
       const movieData = Array.isArray(response) ? response : [];
       setMovies(movieData);
       setFilteredMovies(movieData);
+      
+      // Extract unique individual genres from all movies
+      const allGenres = new Set();
+      movieData.forEach(movie => {
+        if (movie.genre) {
+          // Split by comma and trim whitespace
+          const genreList = movie.genre.split(',').map(g => g.trim());
+          genreList.forEach(genre => allGenres.add(genre));
+        }
+      });
+      
+      // Sort genres alphabetically and add 'All' at the beginning
+      const uniqueGenres = ['All', ...Array.from(allGenres).sort()];
+      setGenres(uniqueGenres);
     } catch (error) {
       console.error('Error loading movies:', error);
       setMovies([]);
@@ -42,12 +54,18 @@ function MoviesPage() {
 
     if (searchTerm) {
       filtered = filtered.filter(movie =>
-        movie.title.toLowerCase().includes(searchTerm.toLowerCase())
+        movie.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        movie.genre.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
 
     if (selectedGenre !== 'All') {
-      filtered = filtered.filter(movie => movie.genre === selectedGenre);
+      filtered = filtered.filter(movie => {
+        if (!movie.genre) return false;
+        // Split genres by comma and check if selected genre is in the list
+        const genreList = movie.genre.split(',').map(g => g.trim().toLowerCase());
+        return genreList.includes(selectedGenre.toLowerCase());
+      });
     }
 
     setFilteredMovies(filtered);

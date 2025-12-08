@@ -67,18 +67,6 @@ function Navbar() {
               My Bookings
             </Link>
           </li>
-          {user?.role === 'ADMIN' && (
-            <li className="nav-item">
-              <Link 
-                to="/admin" 
-                className={`nav-link admin-link ${isActive('/admin') ? 'active' : ''}`}
-                onClick={() => setMenuOpen(false)}
-              >
-                <span className="nav-icon">⚙️</span>
-                Admin
-              </Link>
-            </li>
-          )}
           <li className="nav-item">
             <Link 
               to="/profile" 

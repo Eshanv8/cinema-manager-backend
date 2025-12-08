@@ -26,7 +26,7 @@ function Signup({ isAdmin }) {
     setMessage('');
     try {
       const result = isAdmin ? await adminSignup(formData) : await signup(formData);
-      setMessage(result.message || (isAdmin ? 'Admin registration successful!' : 'Registration successful! You received 100 bonus loyalty points!'));
+      setMessage(result.message || (isAdmin ? 'Admin registration successful!' : 'Registration successful!'));
       setFormData({ username: '', email: '', password: '', phone: '' });
     } catch (error) {
       setMessage(error.response?.data?.message || 'Registration failed. Email may already exist.');
