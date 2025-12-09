@@ -25,18 +25,50 @@ const SeatSelection = () => {
       return;
     }
     loadSeats();
+    
+    // Poll for seat updates every 5 seconds to show real-time availability
+    const intervalId = setInterval(() => {
+      loadSeats();
+    }, 5000);
+    
+    return () => clearInterval(intervalId);
   }, [showtimeId]);
 
   const loadSeats = async () => {
     try {
-      setLoading(true);
-      const seatsData = await seatService.getSeatsByShowtime(showtimeId);
-      setSeats(seatsData);
+      if (!loading) {
+        // Silent refresh - don't show loading state on polls
+        const seatsData = await seatService.getSeatsByShowtime(showtimeId);
+        const updatedSeats = seatsData;
+        
+        // Check if any selected seats were booked by someone else
+        const nowUnavailable = selectedSeats.filter(seat => {
+          const updatedSeat = updatedSeats.find(s => s.id === seat.id);
+          return updatedSeat && updatedSeat.status === 'BOOKED';
+        });
+        
+        if (nowUnavailable.length > 0) {
+          alert(`Warning: ${nowUnavailable.length} seat(s) you selected were just booked by another user!`);
+          // Remove unavailable seats from selection
+          setSelectedSeats(selectedSeats.filter(seat => 
+            !nowUnavailable.find(us => us.id === seat.id)
+          ));
+        }
+        
+        setSeats(updatedSeats);
+      } else {
+        // Initial load
+        setLoading(true);
+        const seatsData = await seatService.getSeatsByShowtime(showtimeId);
+        setSeats(seatsData);
+        setLoading(false);
+      }
     } catch (error) {
       console.error('Error loading seats:', error);
-      alert('Failed to load seats. Please try again.');
-    } finally {
-      setLoading(false);
+      if (loading) {
+        alert('Failed to load seats. Please try again.');
+        setLoading(false);
+      }
     }
   };
 
@@ -85,19 +117,23 @@ const SeatSelection = () => {
       
       const bookingData = {
         userId: user.id,
+        movieId: movie.id,
         showtimeId: showtimeId,
         seatIds: selectedSeats.map(seat => seat.id),
-        totalPrice: calculateTotalPrice(),
-        bookingDate: new Date().toISOString()
+        seatNumbers: selectedSeats.map(seat => `${seat.row}${seat.seatNumber}`),
+        numberOfSeats: selectedSeats.length,
+        totalAmount: calculateTotalPrice(),
+        showDate: new Date(showtime.showDateTime)
       };
 
-      await bookingService.createBooking(bookingData);
+      const response = await bookingService.createBooking(bookingData);
       
-      alert(`Booking confirmed! ${selectedSeats.length} seats booked successfully.`);
+      alert(`Booking confirmed! Your booking code is: ${response.bookingCode}\nSeats: ${bookingData.seatNumbers.join(', ')}`);
       navigate('/home');
     } catch (error) {
       console.error('Error creating booking:', error);
-      alert('Failed to create booking. Please try again.');
+      const errorMessage = error.response?.data?.message || error.message || 'Failed to create booking';
+      alert(`Booking failed: ${errorMessage}`);
     } finally {
       setBookingInProgress(false);
     }

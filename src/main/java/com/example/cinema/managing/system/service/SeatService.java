@@ -29,4 +29,39 @@ public class SeatService {
         return seatRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Seat not found"));
     }
+
+    public List<Seat> bookSeats(List<String> seatIds, String userId, String bookingId) {
+        List<Seat> seats = seatRepository.findAllById(seatIds);
+        
+        // Check if all seats are available
+        for (Seat seat : seats) {
+            if (!"AVAILABLE".equals(seat.getStatus())) {
+                throw new RuntimeException("Seat " + seat.getRow() + seat.getSeatNumber() + " is not available");
+            }
+        }
+        
+        // Book all seats
+        for (Seat seat : seats) {
+            seat.setStatus("BOOKED");
+            seat.setBookedBy(userId);
+            seat.setBookingId(bookingId);
+        }
+        
+        return seatRepository.saveAll(seats);
+    }
+
+    public void releaseSeats(String bookingId) {
+        List<Seat> seats = seatRepository.findByBookingId(bookingId);
+        for (Seat seat : seats) {
+            seat.setStatus("AVAILABLE");
+            seat.setBookedBy(null);
+            seat.setBookingId(null);
+        }
+        seatRepository.saveAll(seats);
+    }
+
+    public boolean areSeatsAvailable(List<String> seatIds) {
+        List<Seat> seats = seatRepository.findAllById(seatIds);
+        return seats.stream().allMatch(seat -> "AVAILABLE".equals(seat.getStatus()));
+    }
 }
