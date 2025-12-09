@@ -62,26 +62,12 @@ public class ShowtimeService {
             for (int j = 1; j <= seatsPerRow; j++) {
                 Seat seat = new Seat();
                 seat.setShowtimeId(showtime.getId());
-                seat.setSeatNumber(rows[i] + j);
+                seat.setSeatNumber(String.valueOf(j));
                 seat.setRow(rows[i]);
                 seat.setColumn(j);
                 seat.setStatus("AVAILABLE");
-                
-                // VIP seats in rows A-C
-                if (i < 3) {
-                    seat.setType("VIP");
-                    seat.setPrice(showtime.getPrice() * 1.5);
-                } 
-                // Premium seats in middle rows D-F
-                else if (i < 6) {
-                    seat.setType("PREMIUM");
-                    seat.setPrice(showtime.getPrice() * 1.2);
-                } 
-                // Standard seats in back rows G-J
-                else {
-                    seat.setType("STANDARD");
-                    seat.setPrice(showtime.getPrice());
-                }
+                seat.setType("STANDARD");
+                seat.setPrice(showtime.getPrice());
                 
                 seats.add(seat);
             }

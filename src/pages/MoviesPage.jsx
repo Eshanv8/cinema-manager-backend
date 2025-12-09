@@ -122,35 +122,42 @@ function MoviesPage() {
       <div className="movies-grid">
         {filteredMovies.map(movie => (
           <div key={movie.id} className="movie-card">
-            <div className="movie-poster-container">
-              <img src={movie.posterUrl || 'https://via.placeholder.com/300x450'} alt={movie.title} />
-              {movie.trailerUrl && (
-                <div className="trailer-overlay" onClick={() => handleWatchTrailer(movie)}>
-                  <div className="play-icon">▶</div>
-                  <span>Watch Trailer</span>
-                </div>
-              )}
-            </div>
-            <div className="movie-info">
-              <h3>{movie.title}</h3>
-              <p className="movie-genre">{movie.genre}</p>
-              <p className="movie-rating">⭐ {movie.rating}/10</p>
-              <p className="movie-duration">⏱️ {movie.duration} min</p>
-              <p className="movie-description">{movie.description?.substring(0, 100)}...</p>
-              <div className="movie-actions">
-                {movie.nowShowing ? (
-                  <Link to={`/booking/${movie.id}`} className="book-btn">
-                    Book Now
-                  </Link>
-                ) : (
-                  <button className="coming-soon-btn" disabled>Coming Soon</button>
-                )}
+            <Link to={`/movies/${movie.id}`} className="movie-link">
+              <div className="movie-poster-container">
+                <img src={movie.posterUrl || 'https://via.placeholder.com/300x450'} alt={movie.title} />
                 {movie.trailerUrl && (
-                  <button className="trailer-btn" onClick={() => handleWatchTrailer(movie)}>
-                    🎬 Trailer
-                  </button>
+                  <div className="trailer-overlay" onClick={(e) => { e.preventDefault(); handleWatchTrailer(movie); }}>
+                    <div className="play-icon">▶</div>
+                    <span>Watch Trailer</span>
+                  </div>
                 )}
               </div>
+              <div className="movie-info">
+                <h3>{movie.title}</h3>
+                <p className="movie-genre">{movie.genre}</p>
+                <p className="movie-rating">⭐ {movie.rating}/10</p>
+                <p className="movie-duration">⏱️ {movie.duration} min</p>
+                <p className="movie-description">{movie.description?.substring(0, 100)}...</p>
+              </div>
+            </Link>
+            <div className="movie-actions">
+              {movie.nowShowing ? (
+                <Link to={`/movies/${movie.id}`} className="book-btn">
+                  <span>🎟️</span>
+                  <span>View Showtimes</span>
+                </Link>
+              ) : (
+                <button className="coming-soon-btn" disabled>
+                  <span>🔜</span>
+                  <span>Coming Soon</span>
+                </button>
+              )}
+              {movie.trailerUrl && (
+                <button className="trailer-btn" onClick={() => handleWatchTrailer(movie)}>
+                  <span className="play-icon-btn">▶</span>
+                  <span>Trailer</span>
+                </button>
+              )}
             </div>
           </div>
         ))}

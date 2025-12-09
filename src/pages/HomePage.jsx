@@ -83,7 +83,7 @@ function HomePage() {
             </div>
             <p className="hero-description">{featuredMovie.description}</p>
             <div className="hero-actions">
-              <Link to={`/booking/${featuredMovie.id}`} className="btn-primary">
+              <Link to={`/movies/${featuredMovie.id}`} className="btn-primary">
                 🎫 BUY TICKETS ONLINE
               </Link>
               {featuredMovie.trailerUrl && (
@@ -117,7 +117,7 @@ function HomePage() {
               <div className="scope-poster-container">
                 <img src={movie.posterUrl || 'https://via.placeholder.com/300x450'} alt={movie.title} />
                 <div className="scope-overlay">
-                  <Link to={`/booking/${movie.id}`} className="scope-buy-btn">
+                  <Link to={`/movies/${movie.id}`} className="scope-buy-btn">
                     BUY TICKETS ONLINE
                   </Link>
                   {movie.trailerUrl && (

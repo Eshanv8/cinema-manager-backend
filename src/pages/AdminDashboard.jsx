@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import movieService from '../services/movieService';
 import merchandiseService from '../services/merchandiseService';
 import foodService from '../services/foodService';
@@ -6,7 +8,10 @@ import ShowtimeManagement from '../components/ShowtimeManagement';
 import './AdminDashboard.css';
 
 function AdminDashboard() {
-  const [activeTab, setActiveTab] = useState('movies');
+  const navigate = useNavigate();
+  const { user, logout } = useAuth();
+  const [activeTab, setActiveTab] = useState('overview');
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [movies, setMovies] = useState([]);
   const [merchandise, setMerchandise] = useState([]);
   const [foods, setFoods] = useState([]);
@@ -245,53 +250,186 @@ function AdminDashboard() {
     }
   };
 
-  return (
-    <div className="admin-dashboard">
-      <div className="admin-container">
-        <h1>🎬 Admin Dashboard</h1>
+  const handleLogout = () => {
+    if (window.confirm('Are you sure you want to logout?')) {
+      logout();
+      navigate('/');
+    }
+  };
 
-        <div className="stats-grid">
-          <div className="stat-card">
-            <h3>Total Movies</h3>
-            <p className="stat-value">{movies.length}</p>
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+  };
+
+  return (
+    <div className="admin-panel">
+      {/* Admin Sidebar */}
+      <aside className={`admin-sidebar ${isSidebarOpen ? 'open' : 'closed'}`}>
+        <div className="sidebar-header">
+          <h2>CINEMA ADMIN</h2>
+          <button className="sidebar-toggle" onClick={toggleSidebar}>
+            {isSidebarOpen ? '◀' : '▶'}
+          </button>
+        </div>
+
+        <div className="admin-profile">
+          <div className="admin-avatar">
+            {user?.username?.charAt(0).toUpperCase() || 'A'}
           </div>
-          <div className="stat-card">
-            <h3>Merchandise Items</h3>
-            <p className="stat-value">{merchandise.length}</p>
-          </div>
-          <div className="stat-card">
-            <h3>Food Items</h3>
-            <p className="stat-value">{foods.length}</p>
+          <div className="admin-info">
+            <p className="admin-name">{user?.username || 'Admin'}</p>
+            <span className="admin-role">Administrator</span>
           </div>
         </div>
 
-        {/* Tab Navigation */}
-        <div className="tab-navigation">
+        <nav className="sidebar-nav">
           <button 
-            className={`tab-btn ${activeTab === 'movies' ? 'active' : ''}`}
+            className={`nav-item ${activeTab === 'overview' ? 'active' : ''}`}
+            onClick={() => setActiveTab('overview')}
+          >
+            <span className="nav-icon">📊</span>
+            <span className="nav-text">Overview</span>
+          </button>
+          <button 
+            className={`nav-item ${activeTab === 'movies' ? 'active' : ''}`}
             onClick={() => setActiveTab('movies')}
           >
-            🎬 Movies
+            <span className="nav-icon">🎬</span>
+            <span className="nav-text">Movies</span>
           </button>
           <button 
-            className={`tab-btn ${activeTab === 'merchandise' ? 'active' : ''}`}
-            onClick={() => setActiveTab('merchandise')}
-          >
-            🛍️ Merchandise
-          </button>
-          <button 
-            className={`tab-btn ${activeTab === 'foods' ? 'active' : ''}`}
-            onClick={() => setActiveTab('foods')}
-          >
-            🍿 Foods
-          </button>
-          <button 
-            className={`tab-btn ${activeTab === 'showtimes' ? 'active' : ''}`}
+            className={`nav-item ${activeTab === 'showtimes' ? 'active' : ''}`}
             onClick={() => setActiveTab('showtimes')}
           >
-            🎞️ Showtimes
+            <span className="nav-icon">🎞️</span>
+            <span className="nav-text">Showtimes</span>
+          </button>
+          <button 
+            className={`nav-item ${activeTab === 'merchandise' ? 'active' : ''}`}
+            onClick={() => setActiveTab('merchandise')}
+          >
+            <span className="nav-icon">🛍️</span>
+            <span className="nav-text">Merchandise</span>
+          </button>
+          <button 
+            className={`nav-item ${activeTab === 'foods' ? 'active' : ''}`}
+            onClick={() => setActiveTab('foods')}
+          >
+            <span className="nav-icon">🍿</span>
+            <span className="nav-text">Food & Drinks</span>
+          </button>
+          <button 
+            className={`nav-item ${activeTab === 'offers' ? 'active' : ''}`}
+            onClick={() => setActiveTab('offers')}
+          >
+            <span className="nav-icon">🎁</span>
+            <span className="nav-text">Offers & Deals</span>
+          </button>
+        </nav>
+
+        <div className="sidebar-footer">
+          <button className="logout-btn" onClick={handleLogout}>
+            <span className="nav-icon">🚪</span>
+            <span className="nav-text">Logout</span>
           </button>
         </div>
+      </aside>
+
+      {/* Main Content Area */}
+      <main className="admin-content">
+        <div className="content-header">
+          <h1 className="page-title">
+            {activeTab === 'overview' && '📊 Dashboard Overview'}
+            {activeTab === 'movies' && '🎬 Movie Management'}
+            {activeTab === 'showtimes' && '🎞️ Showtime Management'}
+            {activeTab === 'merchandise' && '🛍️ Merchandise Management'}
+            {activeTab === 'foods' && '🍿 Food & Beverage Management'}
+            {activeTab === 'offers' && '🎁 Offers & Promotions'}
+          </h1>
+          <div className="header-actions">
+            <span className="timestamp">{new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</span>
+          </div>
+        </div>
+
+        {/* Overview Tab */}
+        {activeTab === 'overview' && (
+          <div className="dashboard-overview">
+            <div className="stats-grid">
+              <div className="stat-card">
+                <div className="stat-icon">🎬</div>
+                <div className="stat-details">
+                  <h3>Total Movies</h3>
+                  <p className="stat-value">{movies.length}</p>
+                  <span className="stat-label">Now Showing: {movies.filter(m => m.nowShowing).length}</span>
+                </div>
+              </div>
+              <div className="stat-card">
+                <div className="stat-icon">🛍️</div>
+                <div className="stat-details">
+                  <h3>Merchandise</h3>
+                  <p className="stat-value">{merchandise.length}</p>
+                  <span className="stat-label">Active Items</span>
+                </div>
+              </div>
+              <div className="stat-card">
+                <div className="stat-icon">🍿</div>
+                <div className="stat-details">
+                  <h3>Food Items</h3>
+                  <p className="stat-value">{foods.length}</p>
+                  <span className="stat-label">Available</span>
+                </div>
+              </div>
+              <div className="stat-card">
+                <div className="stat-icon">💰</div>
+                <div className="stat-details">
+                  <h3>Revenue</h3>
+                  <p className="stat-value">$0</p>
+                  <span className="stat-label">This Month</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="quick-actions">
+              <h2>Quick Actions</h2>
+              <div className="action-buttons">
+                <button className="action-card" onClick={() => setActiveTab('movies')}>
+                  <span className="action-icon">➕</span>
+                  <span>Add New Movie</span>
+                </button>
+                <button className="action-card" onClick={() => setActiveTab('showtimes')}>
+                  <span className="action-icon">🎞️</span>
+                  <span>Manage Showtimes</span>
+                </button>
+                <button className="action-card" onClick={() => setActiveTab('merchandise')}>
+                  <span className="action-icon">🛍️</span>
+                  <span>Add Merchandise</span>
+                </button>
+                <button className="action-card" onClick={() => setActiveTab('offers')}>
+                  <span className="action-icon">🎁</span>
+                  <span>Create Offer</span>
+                </button>
+              </div>
+            </div>
+
+            <div className="recent-activity">
+              <h2>Recent Movies</h2>
+              <div className="activity-list">
+                {movies.slice(0, 5).map(movie => (
+                  <div key={movie.id} className="activity-item">
+                    <img src={movie.posterUrl || 'https://via.placeholder.com/60x90'} alt={movie.title} />
+                    <div className="activity-info">
+                      <h4>{movie.title}</h4>
+                      <p>{movie.genre} • {movie.duration} min</p>
+                      <span className={`badge ${movie.nowShowing ? 'active' : 'inactive'}`}>
+                        {movie.nowShowing ? 'Now Showing' : 'Coming Soon'}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Movies Tab */}
         {activeTab === 'movies' && (
@@ -476,9 +614,9 @@ function AdminDashboard() {
                     </select>
                     <input
                       type="number"
-                      step="0.01"
+                      step="1"
                       name="price"
-                      placeholder="Price"
+                      placeholder="Price (LKR)"
                       value={newMerchandise.price}
                       onChange={handleMerchandiseInputChange}
                       required
@@ -558,7 +696,7 @@ function AdminDashboard() {
                     <tr key={item.id}>
                       <td>{item.name}</td>
                       <td>{item.category}</td>
-                      <td>${item.price}</td>
+                      <td>Rs. {item.price}</td>
                       <td>{item.stock}</td>
                       <td>{item.salesCount}</td>
                       <td>
@@ -624,9 +762,9 @@ function AdminDashboard() {
                     </select>
                     <input
                       type="number"
-                      step="0.01"
+                      step="1"
                       name="price"
-                      placeholder="Price"
+                      placeholder="Price (LKR)"
                       value={newFood.price}
                       onChange={handleFoodInputChange}
                       required
@@ -701,7 +839,7 @@ function AdminDashboard() {
                       <td>{item.name}</td>
                       <td>{item.category}</td>
                       <td>{item.size}</td>
-                      <td>${item.price}</td>
+                      <td>Rs. {item.price}</td>
                       <td>{item.salesCount}</td>
                       <td>
                         <span className={`status ${item.active ? 'showing' : 'upcoming'}`}>
@@ -722,9 +860,29 @@ function AdminDashboard() {
         )}
 
         {activeTab === 'showtimes' && (
-          <ShowtimeManagement />
+          <div className="tab-content">
+            <ShowtimeManagement />
+          </div>
         )}
-      </div>
+
+        {/* Offers Tab */}
+        {activeTab === 'offers' && (
+          <div className="tab-content">
+            <div className="offers-section">
+              <div className="section-header-with-action">
+                <h2>Manage Offers & Promotions</h2>
+                <button className="btn-primary">+ Create New Offer</button>
+              </div>
+              <div className="empty-state">
+                <div className="empty-icon">🎁</div>
+                <h3>No Offers Yet</h3>
+                <p>Create special offers and promotions to attract more customers</p>
+                <button className="btn-secondary">Create First Offer</button>
+              </div>
+            </div>
+          </div>
+        )}
+      </main>
     </div>
   );
 }

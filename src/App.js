@@ -1,11 +1,13 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import './App.css';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import AuthPage from './pages/AuthPage';
 import HomePage from './pages/HomePage';
 import MoviesPage from './pages/MoviesPage';
+import MovieDetailsPage from './pages/MovieDetailsPage';
 import BookingPage from './pages/BookingPage';
+import SeatSelection from './pages/SeatSelection';
 import AdminDashboard from './pages/AdminDashboard';
 import ProfilePage from './pages/ProfilePage';
 import TrailerPlayer from './components/TrailerPlayer';
@@ -32,10 +34,12 @@ const ProtectedRoute = ({ children, adminOnly = false }) => {
 
 function AppContent() {
   const { user } = useAuth();
+  const location = useLocation();
+  const isAdminPage = location.pathname === '/admin';
 
   return (
     <div className="App">
-      {user && <Navbar />}
+      {user && !isAdminPage && <Navbar />}
       <Routes>
         <Route path="/" element={user ? <Navigate to="/home" /> : <AuthPage />} />
         <Route
@@ -55,6 +59,14 @@ function AppContent() {
           }
         />
         <Route
+          path="/movies/:id"
+          element={
+            <ProtectedRoute>
+              <MovieDetailsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="/trailers"
           element={
             <ProtectedRoute>
@@ -67,6 +79,14 @@ function AppContent() {
           element={
             <ProtectedRoute>
               <BookingPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/seat-selection/:showtimeId"
+          element={
+            <ProtectedRoute>
+              <SeatSelection />
             </ProtectedRoute>
           }
         />

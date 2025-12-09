@@ -26,8 +26,7 @@ function Navbar() {
     <nav className="navbar">
       <div className="nav-container">
         <Link to="/home" className="nav-logo">
-          <span className="logo-icon">🎬</span>
-          <span className="logo-text">Cinema Palace</span>
+          <span className="logo-text">CINEMA PALACE</span>
         </Link>
         
         <button className="nav-toggle" onClick={toggleMenu}>
@@ -43,7 +42,6 @@ function Navbar() {
               className={`nav-link ${isActive('/home') ? 'active' : ''}`}
               onClick={() => setMenuOpen(false)}
             >
-              <span className="nav-icon">🏠</span>
               Home
             </Link>
           </li>
@@ -53,7 +51,6 @@ function Navbar() {
               className={`nav-link ${isActive('/movies') ? 'active' : ''}`}
               onClick={() => setMenuOpen(false)}
             >
-              <span className="nav-icon">🎥</span>
               Movies
             </Link>
           </li>
@@ -63,7 +60,6 @@ function Navbar() {
               className={`nav-link ${isActive('/bookings') ? 'active' : ''}`}
               onClick={() => setMenuOpen(false)}
             >
-              <span className="nav-icon">🎫</span>
               My Bookings
             </Link>
           </li>
@@ -73,13 +69,11 @@ function Navbar() {
               className={`nav-link ${isActive('/profile') ? 'active' : ''}`}
               onClick={() => setMenuOpen(false)}
             >
-              <span className="nav-icon">👤</span>
               {user?.username}
             </Link>
           </li>
           <li className="nav-item">
             <button onClick={handleLogout} className="nav-logout">
-              <span className="logout-icon">🚪</span>
               Logout
             </button>
           </li>
