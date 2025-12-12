@@ -32,6 +32,7 @@ const SeatSelection = () => {
     }, 5000);
     
     return () => clearInterval(intervalId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showtimeId]);
 
   const loadSeats = async () => {
@@ -120,7 +121,7 @@ const SeatSelection = () => {
         movieId: movie.id,
         showtimeId: showtimeId,
         seatIds: selectedSeats.map(seat => seat.id),
-        seatNumbers: selectedSeats.map(seat => `${seat.row}${seat.seatNumber}`),
+        seatNumbers: selectedSeats.map(seat => `${seat.row}${seat.column}`),
         numberOfSeats: selectedSeats.length,
         totalAmount: calculateTotalPrice(),
         showDate: new Date(showtime.showDateTime)
@@ -194,7 +195,7 @@ const SeatSelection = () => {
                     key={seat.id}
                     className={getSeatClass(seat)}
                     onClick={() => handleSeatClick(seat)}
-                    title={`${seat.row}${seat.column} - Rs. ${showtime.price.toFixed(2)}`}
+                    title={`Seat ${seat.row}${seat.column}`}
                   >
                     {seat.column}
                   </div>
@@ -207,7 +208,7 @@ const SeatSelection = () => {
       <div className="legend">
         <div className="legend-item">
           <div className="seat available"></div>
-          <span>Available (Rs. {showtime.price.toFixed(2)})</span>
+          <span>Available</span>
         </div>
         <div className="legend-item">
           <div className="seat selected"></div>

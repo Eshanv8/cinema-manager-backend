@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
+import bookingService from '../services/bookingService';
 import './ProfilePage.css';
 
 function ProfilePage() {
@@ -7,19 +8,181 @@ function ProfilePage() {
   const [bookings, setBookings] = useState([]);
   const [orders, setOrders] = useState([]);
   const [activeTab, setActiveTab] = useState('profile');
+  const [loading, setLoading] = useState(true);
+  const [isEditing, setIsEditing] = useState(false);
+  const [formData, setFormData] = useState({
+    username: '',
+    email: '',
+    phone: '',
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: ''
+  });
+  const [errors, setErrors] = useState({});
+  const [successMessage, setSuccessMessage] = useState('');
 
-  // Sample data (replace with actual API calls)
   useEffect(() => {
-    // Load bookings and orders
-    setBookings([
-      { id: 1, movie: 'Inception', date: '2024-01-15', seats: 'A1, A2', total: 24.00 },
-      { id: 2, movie: 'The Matrix', date: '2024-01-10', seats: 'B5', total: 12.00 }
-    ]);
-    setOrders([
-      { id: 1, items: 'Popcorn x2, Cola x1', date: '2024-01-15', total: 15.00 },
-      { id: 2, items: 'Nachos x1', date: '2024-01-10', total: 8.00 }
-    ]);
-  }, []);
+    loadUserData();
+  }, [user]);
+
+  useEffect(() => {
+    if (user) {
+      setFormData({
+        username: user.username || '',
+        email: user.email || '',
+        phone: user.phone || '',
+        currentPassword: '',
+        newPassword: '',
+        confirmPassword: ''
+      });
+    }
+  }, [user, isEditing]);
+
+  const loadUserData = async () => {
+    if (!user?.id) return;
+    
+    try {
+      setLoading(true);
+      // Load real bookings from backend
+      const userBookings = await bookingService.getUserBookings(user.id);
+      setBookings(userBookings || []);
+      
+      // Orders will be empty for now until food ordering is implemented
+      setOrders([]);
+    } catch (error) {
+      console.error('Error loading user data:', error);
+      setBookings([]);
+      setOrders([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+    // Clear error for this field
+    if (errors[name]) {
+      setErrors(prev => ({
+        ...prev,
+        [name]: ''
+      }));
+    }
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+
+    if (!formData.username.trim()) {
+      newErrors.username = 'Username is required';
+    }
+
+    if (!formData.email.trim()) {
+      newErrors.email = 'Email is required';
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = 'Email is invalid';
+    }
+
+    if (!formData.phone.trim()) {
+      newErrors.phone = 'Phone is required';
+    }
+
+    // If changing password
+    if (formData.newPassword || formData.confirmPassword) {
+      if (!formData.currentPassword) {
+        newErrors.currentPassword = 'Current password is required to change password';
+      }
+      if (!formData.newPassword) {
+        newErrors.newPassword = 'New password is required';
+      } else if (formData.newPassword.length < 6) {
+        newErrors.newPassword = 'Password must be at least 6 characters';
+      }
+      if (formData.newPassword !== formData.confirmPassword) {
+        newErrors.confirmPassword = 'Passwords do not match';
+      }
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleUpdateProfile = async () => {
+    if (!validateForm()) {
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const updateData = {
+        username: formData.username,
+        email: formData.email,
+        phone: formData.phone
+      };
+
+      // Include password fields only if changing password
+      if (formData.newPassword) {
+        updateData.currentPassword = formData.currentPassword;
+        updateData.newPassword = formData.newPassword;
+      }
+
+      const response = await fetch(`http://localhost:8081/api/users/${user.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify(updateData)
+      });
+
+      if (!response.ok) {
+        const error = await response.text();
+        throw new Error(error || 'Failed to update profile');
+      }
+
+      const updatedUser = await response.json();
+      
+      // Update local storage
+      localStorage.setItem('user', JSON.stringify(updatedUser));
+      
+      setSuccessMessage('Profile updated successfully!');
+      setIsEditing(false);
+      
+      // Clear password fields
+      setFormData(prev => ({
+        ...prev,
+        currentPassword: '',
+        newPassword: '',
+        confirmPassword: ''
+      }));
+
+      // Refresh page to update user context
+      setTimeout(() => {
+        window.location.reload();
+      }, 1500);
+
+    } catch (error) {
+      setErrors({ general: error.message });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setIsEditing(false);
+    setFormData({
+      username: user.username || '',
+      email: user.email || '',
+      phone: user.phone || '',
+      currentPassword: '',
+      newPassword: '',
+      confirmPassword: ''
+    });
+    setErrors({});
+    setSuccessMessage('');
+  };
 
   return (
     <div className="profile-page">
@@ -60,51 +223,165 @@ function ProfilePage() {
           {activeTab === 'profile' && (
             <div className="profile-info">
               <h2>Account Information</h2>
-              <div className="info-grid">
-                <div className="info-item">
-                  <label>Username</label>
-                  <p>{user?.username}</p>
-                </div>
-                <div className="info-item">
-                  <label>Email</label>
-                  <p>{user?.email}</p>
-                </div>
-                <div className="info-item">
-                  <label>Phone</label>
-                  <p>{user?.phone}</p>
-                </div>
-                <div className="info-item">
-                  <label>Role</label>
-                  <p>{user?.role}</p>
-                </div>
-                <div className="info-item">
-                  <label>Member Since</label>
-                  <p>{user?.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}</p>
-                </div>
-              </div>
-              <button className="edit-btn">Edit Profile</button>
+              
+              {successMessage && (
+                <div className="success-message">{successMessage}</div>
+              )}
+              
+              {errors.general && (
+                <div className="error-message">{errors.general}</div>
+              )}
+
+              {!isEditing ? (
+                <>
+                  <div className="info-grid">
+                    <div className="info-item">
+                      <label>Username</label>
+                      <p>{user?.username}</p>
+                    </div>
+                    <div className="info-item">
+                      <label>Email</label>
+                      <p>{user?.email}</p>
+                    </div>
+                    <div className="info-item">
+                      <label>Phone</label>
+                      <p>{user?.phone}</p>
+                    </div>
+                    <div className="info-item">
+                      <label>Role</label>
+                      <p>{user?.role}</p>
+                    </div>
+                    <div className="info-item">
+                      <label>Member Since</label>
+                      <p>{user?.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}</p>
+                    </div>
+                  </div>
+                  <button className="edit-btn" onClick={() => setIsEditing(true)}>
+                    Edit Profile
+                  </button>
+                </>
+              ) : (
+                <>
+                  <div className="edit-form">
+                    <div className="form-group">
+                      <label>Username</label>
+                      <input
+                        type="text"
+                        name="username"
+                        value={formData.username}
+                        onChange={handleInputChange}
+                        className={errors.username ? 'error' : ''}
+                      />
+                      {errors.username && <span className="error-text">{errors.username}</span>}
+                    </div>
+
+                    <div className="form-group">
+                      <label>Email</label>
+                      <input
+                        type="email"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleInputChange}
+                        className={errors.email ? 'error' : ''}
+                      />
+                      {errors.email && <span className="error-text">{errors.email}</span>}
+                    </div>
+
+                    <div className="form-group">
+                      <label>Phone</label>
+                      <input
+                        type="text"
+                        name="phone"
+                        value={formData.phone}
+                        onChange={handleInputChange}
+                        className={errors.phone ? 'error' : ''}
+                      />
+                      {errors.phone && <span className="error-text">{errors.phone}</span>}
+                    </div>
+
+                    <div className="password-section">
+                      <h3>Change Password (Optional)</h3>
+                      
+                      <div className="form-group">
+                        <label>Current Password</label>
+                        <input
+                          type="password"
+                          name="currentPassword"
+                          value={formData.currentPassword}
+                          onChange={handleInputChange}
+                          className={errors.currentPassword ? 'error' : ''}
+                          placeholder="Enter current password"
+                        />
+                        {errors.currentPassword && <span className="error-text">{errors.currentPassword}</span>}
+                      </div>
+
+                      <div className="form-group">
+                        <label>New Password</label>
+                        <input
+                          type="password"
+                          name="newPassword"
+                          value={formData.newPassword}
+                          onChange={handleInputChange}
+                          className={errors.newPassword ? 'error' : ''}
+                          placeholder="Enter new password"
+                        />
+                        {errors.newPassword && <span className="error-text">{errors.newPassword}</span>}
+                      </div>
+
+                      <div className="form-group">
+                        <label>Confirm New Password</label>
+                        <input
+                          type="password"
+                          name="confirmPassword"
+                          value={formData.confirmPassword}
+                          onChange={handleInputChange}
+                          className={errors.confirmPassword ? 'error' : ''}
+                          placeholder="Confirm new password"
+                        />
+                        {errors.confirmPassword && <span className="error-text">{errors.confirmPassword}</span>}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="edit-actions">
+                    <button className="save-btn" onClick={handleUpdateProfile} disabled={loading}>
+                      {loading ? 'Saving...' : 'Save Changes'}
+                    </button>
+                    <button className="cancel-btn" onClick={handleCancelEdit}>
+                      Cancel
+                    </button>
+                  </div>
+                </>
+              )}
             </div>
           )}
 
           {activeTab === 'bookings' && (
             <div className="bookings-list">
               <h2>My Bookings</h2>
-              {bookings.length > 0 ? (
+              {loading ? (
+                <p className="loading-text">Loading bookings...</p>
+              ) : bookings.length > 0 ? (
                 bookings.map(booking => (
                   <div key={booking.id} className="booking-card">
                     <div className="booking-info">
-                      <h3>{booking.movie}</h3>
-                      <p>Date: {booking.date}</p>
-                      <p>Seats: {booking.seats}</p>
+                      <h3>{booking.movieTitle || 'Movie'}</h3>
+                      <p>Booking Code: {booking.bookingCode}</p>
+                      <p>Date: {new Date(booking.showDate).toLocaleDateString()}</p>
+                      <p>Seats: {booking.seatNumbers?.join(', ')}</p>
+                      <p>Status: <span className={`status ${booking.status?.toLowerCase()}`}>{booking.status}</span></p>
                     </div>
                     <div className="booking-price">
-                      <p className="price">${booking.total}</p>
-                      <button className="view-ticket-btn">View Ticket</button>
+                      <p className="price">Rs. {booking.totalAmount?.toFixed(2)}</p>
+                      <p className="seat-count">{booking.numberOfSeats} seat(s)</p>
                     </div>
                   </div>
                 ))
               ) : (
-                <p className="no-data">No bookings yet</p>
+                <div className="no-data">
+                  <p>No bookings yet</p>
+                  <p className="subtitle">Book your first movie to see it here!</p>
+                </div>
               )}
             </div>
           )}
@@ -112,7 +389,9 @@ function ProfilePage() {
           {activeTab === 'orders' && (
             <div className="orders-list">
               <h2>My Orders</h2>
-              {orders.length > 0 ? (
+              {loading ? (
+                <p className="loading-text">Loading orders...</p>
+              ) : orders.length > 0 ? (
                 orders.map(order => (
                   <div key={order.id} className="order-card">
                     <div className="order-info">
@@ -121,12 +400,15 @@ function ProfilePage() {
                       <p>Date: {order.date}</p>
                     </div>
                     <div className="order-price">
-                      <p className="price">${order.total}</p>
+                      <p className="price">Rs. {order.total}</p>
                     </div>
                   </div>
                 ))
               ) : (
-                <p className="no-data">No orders yet</p>
+                <div className="no-data">
+                  <p>No food orders yet</p>
+                  <p className="subtitle">Order snacks with your next booking!</p>
+                </div>
               )}
             </div>
           )}

@@ -28,17 +28,23 @@ function MoviesPage() {
       setFilteredMovies(movieData);
       
       // Extract unique individual genres from all movies
-      const allGenres = new Set();
+      const allGenres = new Map(); // Use Map to store lowercase -> proper case mapping
       movieData.forEach(movie => {
         if (movie.genre) {
           // Split by comma and trim whitespace
           const genreList = movie.genre.split(',').map(g => g.trim());
-          genreList.forEach(genre => allGenres.add(genre));
+          genreList.forEach(genre => {
+            const lowerGenre = genre.toLowerCase();
+            // Keep the first occurrence's capitalization
+            if (!allGenres.has(lowerGenre)) {
+              allGenres.set(lowerGenre, genre);
+            }
+          });
         }
       });
       
       // Sort genres alphabetically and add 'All' at the beginning
-      const uniqueGenres = ['All', ...Array.from(allGenres).sort()];
+      const uniqueGenres = ['All', ...Array.from(allGenres.values()).sort()];
       setGenres(uniqueGenres);
     } catch (error) {
       console.error('Error loading movies:', error);

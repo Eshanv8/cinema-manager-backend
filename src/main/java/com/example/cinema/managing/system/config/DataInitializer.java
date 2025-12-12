@@ -1,12 +1,17 @@
 package com.example.cinema.managing.system.config;
 
 import com.example.cinema.managing.system.model.Movie;
+import com.example.cinema.managing.system.model.Seat;
+import com.example.cinema.managing.system.model.Showtime;
 import com.example.cinema.managing.system.repository.MovieRepository;
+import com.example.cinema.managing.system.repository.ShowtimeRepository;
+import com.example.cinema.managing.system.repository.SeatRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -15,6 +20,12 @@ public class DataInitializer implements CommandLineRunner {
 
     @Autowired
     private MovieRepository movieRepository;
+    
+    @Autowired
+    private ShowtimeRepository showtimeRepository;
+    
+    @Autowired
+    private SeatRepository seatRepository;
 
     @Override
     public void run(String... args) throws Exception {
@@ -90,5 +101,52 @@ public class DataInitializer implements CommandLineRunner {
         } else {
             System.out.println("Movies already exist in database. Skipping initialization.");
         }
+        
+        // Generate seats for all showtimes that don't have seats
+        generateSeatsForExistingShowtimes();
+    }
+    
+    private void generateSeatsForExistingShowtimes() {
+        List<Showtime> allShowtimes = showtimeRepository.findAll();
+        int showtimesWithoutSeats = 0;
+        
+        for (Showtime showtime : allShowtimes) {
+            List<Seat> existingSeats = seatRepository.findByShowtimeId(showtime.getId());
+            
+            if (existingSeats.isEmpty()) {
+                System.out.println("Generating seats for showtime: " + showtime.getId());
+                generateSeats(showtime);
+                showtimesWithoutSeats++;
+            }
+        }
+        
+        if (showtimesWithoutSeats > 0) {
+            System.out.println("Generated seats for " + showtimesWithoutSeats + " showtime(s)!");
+        } else {
+            System.out.println("All showtimes already have seats.");
+        }
+    }
+    
+    private void generateSeats(Showtime showtime) {
+        List<Seat> seats = new ArrayList<>();
+        String[] rows = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J"};
+        int seatsPerRow = 10;
+        
+        for (int i = 0; i < rows.length; i++) {
+            for (int j = 1; j <= seatsPerRow; j++) {
+                Seat seat = new Seat();
+                seat.setShowtimeId(showtime.getId());
+                seat.setSeatNumber(String.valueOf(j));
+                seat.setRow(rows[i]);
+                seat.setColumn(j);
+                seat.setStatus("AVAILABLE");
+                seat.setType("STANDARD");
+                seat.setPrice(showtime.getPrice());
+                
+                seats.add(seat);
+            }
+        }
+        
+        seatRepository.saveAll(seats);
     }
 }

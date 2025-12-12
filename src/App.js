@@ -41,7 +41,8 @@ function AppContent() {
     <div className="App">
       {user && !isAdminPage && <Navbar />}
       <Routes>
-        <Route path="/" element={user ? <Navigate to="/home" /> : <AuthPage />} />
+        <Route path="/" element={<AuthPage />} />
+        <Route path="/login" element={<AuthPage />} />
         <Route
           path="/home"
           element={
