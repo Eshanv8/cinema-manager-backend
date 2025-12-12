@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/foods")
-@CrossOrigin(origins = "*")
+@RequestMapping("/api/food")
+@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 public class FoodController {
 
     @Autowired

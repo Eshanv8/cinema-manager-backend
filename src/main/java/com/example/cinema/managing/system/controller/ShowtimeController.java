@@ -11,7 +11,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/showtimes")
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 public class ShowtimeController {
 
     @Autowired
@@ -35,6 +35,11 @@ public class ShowtimeController {
     @GetMapping("/upcoming")
     public ResponseEntity<List<Showtime>> getUpcomingShowtimes() {
         return ResponseEntity.ok(showtimeService.getUpcomingShowtimes());
+    }
+
+    @GetMapping("/available")
+    public ResponseEntity<List<Showtime>> getAvailableShowtimes() {
+        return ResponseEntity.ok(showtimeService.getAllShowtimes());
     }
 
     @PostMapping

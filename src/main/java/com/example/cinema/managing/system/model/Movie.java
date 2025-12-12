@@ -54,7 +54,23 @@ public class Movie {
     
     private boolean comingSoon = false;
     
+    private List<Showtime> showtimes; // Available showtimes for this movie
+    
     private LocalDateTime createdAt = LocalDateTime.now();
     
     private LocalDateTime updatedAt = LocalDateTime.now();
+    
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class Showtime {
+        private String id;
+        private String date; // e.g., "2025-12-09"
+        private String time; // e.g., "10:00", "14:30", "19:00"
+        private String format; // "2D", "3D", "IMAX", "4DX"
+        private String screen; // e.g., "1", "2", "VIP Hall"
+        private Double price; // Base ticket price
+        private Integer availableSeats; // Seats available for this showtime
+        private Integer totalSeats; // Total capacity
+    }
 }
