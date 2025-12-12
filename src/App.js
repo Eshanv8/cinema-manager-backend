@@ -12,6 +12,7 @@ import AdminDashboard from './pages/AdminDashboard';
 import ProfilePage from './pages/ProfilePage';
 import TrailerPlayer from './components/TrailerPlayer';
 import Navbar from './components/Navbar';
+import Footer from './components/Footer';
 
 // Protected Route Component
 const ProtectedRoute = ({ children, adminOnly = false }) => {
@@ -108,6 +109,7 @@ function AppContent() {
           }
         />
       </Routes>
+      {user && <Footer />}
     </div>
   );
 }
