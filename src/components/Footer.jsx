@@ -5,6 +5,8 @@ import './Footer.css';
 function Footer() {
   const [email, setEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
+  const [showFAQ, setShowFAQ] = useState(false);
+  const [expandedFAQ, setExpandedFAQ] = useState(null);
 
   const handleSubscribe = (e) => {
     e.preventDefault();
@@ -14,6 +16,135 @@ function Footer() {
       setTimeout(() => setSubscribed(false), 3000);
     }
   };
+
+  const toggleFAQ = (index) => {
+    setExpandedFAQ(expandedFAQ === index ? null : index);
+  };
+
+  const faqs = [
+    {
+      category: "Booking & Tickets",
+      questions: [
+        {
+          question: "How do I book tickets online?",
+          answer: "To book tickets, simply browse our movie listings, select your preferred showtime, choose your seats, and proceed to payment. You'll receive a confirmation email with your e-ticket immediately after successful payment."
+        },
+        {
+          question: "Can I cancel or modify my booking?",
+          answer: "Yes, you can cancel your booking up to 2 hours before the showtime. Go to 'My Bookings' in your profile, select the booking you want to cancel, and click 'Cancel Booking'. Refunds will be processed within 5-7 business days."
+        },
+        {
+          question: "Do I need to print my ticket?",
+          answer: "No, you don't need to print your ticket. Simply show your e-ticket (via email or in the app) at the theater entrance. You can also use the booking ID for entry."
+        },
+        {
+          question: "Can I book tickets for multiple movies at once?",
+          answer: "Yes, you can book tickets for multiple movies in separate transactions. Each booking will have its own confirmation and e-ticket."
+        }
+      ]
+    },
+    {
+      category: "Payments & Refunds",
+      questions: [
+        {
+          question: "What payment methods do you accept?",
+          answer: "We accept all major credit/debit cards (Visa, Mastercard, American Express), digital wallets (PayPal, Apple Pay, Google Pay), and net banking from all major banks."
+        },
+        {
+          question: "Is my payment information secure?",
+          answer: "Absolutely! We use industry-standard SSL encryption and PCI-DSS compliant payment gateways to ensure your payment information is completely secure."
+        },
+        {
+          question: "How long does it take to get a refund?",
+          answer: "Refunds are processed within 5-7 business days from the cancellation date. The amount will be credited back to your original payment method."
+        },
+        {
+          question: "Can I get a refund if I miss the movie?",
+          answer: "Unfortunately, we cannot provide refunds for missed shows. Please ensure you arrive on time. We recommend arriving at least 15 minutes before the showtime."
+        }
+      ]
+    },
+    {
+      category: "Theater Experience",
+      questions: [
+        {
+          question: "What are your theater timings?",
+          answer: "Our theaters are open from 9:00 AM to 11:30 PM daily. Show timings vary based on the movie schedule. Check our website for specific showtimes."
+        },
+        {
+          question: "Do you have parking facilities?",
+          answer: "Yes, we have ample parking space available at all our locations. Parking is complimentary for the first 4 hours with a valid ticket."
+        },
+        {
+          question: "Are outside food and beverages allowed?",
+          answer: "Outside food and beverages are not permitted inside the theater. However, we have a wide range of snacks, meals, and beverages available at our concession stands."
+        },
+        {
+          question: "Do you offer special seating for people with disabilities?",
+          answer: "Yes, we have wheelchair-accessible seating and facilities at all our locations. Please inform us at the time of booking for special arrangements."
+        }
+      ]
+    },
+    {
+      category: "Loyalty & Offers",
+      questions: [
+        {
+          question: "What is the loyalty points program?",
+          answer: "Our loyalty program rewards you with points for every booking. Earn 10 points per dollar spent. Accumulated points can be redeemed for discounts, free tickets, and exclusive perks."
+        },
+        {
+          question: "How do I check my loyalty points balance?",
+          answer: "You can view your loyalty points balance in your profile section under 'My Account'. Points are updated immediately after each transaction."
+        },
+        {
+          question: "Do loyalty points expire?",
+          answer: "Loyalty points are valid for 12 months from the date of earning. Points nearing expiration will be highlighted in your account."
+        },
+        {
+          question: "Are there any special offers for students or seniors?",
+          answer: "Yes! We offer special discounts for students (with valid ID) and senior citizens (60+). Check our 'Offers' section for current promotions."
+        }
+      ]
+    },
+    {
+      category: "Account & Profile",
+      questions: [
+        {
+          question: "How do I create an account?",
+          answer: "Click on 'Sign Up' at the top of the page, enter your details (name, email, phone, password), and verify your email. You can then start booking tickets immediately."
+        },
+        {
+          question: "I forgot my password. What should I do?",
+          answer: "Click on 'Forgot Password' on the login page, enter your registered email, and you'll receive a password reset link. Follow the instructions to create a new password."
+        },
+        {
+          question: "Can I update my profile information?",
+          answer: "Yes, go to your profile page and click on 'Edit Profile'. You can update your name, phone number, and other details. Email changes require verification."
+        },
+        {
+          question: "How do I delete my account?",
+          answer: "To delete your account, please contact our customer support at support@cinematic.com. Note that this action is irreversible and you'll lose all loyalty points."
+        }
+      ]
+    },
+    {
+      category: "Technical Support",
+      questions: [
+        {
+          question: "The website is not working properly. What should I do?",
+          answer: "Try clearing your browser cache and cookies, or use a different browser. If the issue persists, contact our support team at support@cinematic.com with details about the problem."
+        },
+        {
+          question: "I didn't receive my confirmation email. What should I do?",
+          answer: "Check your spam/junk folder. If you still can't find it, log into your account and go to 'My Bookings' to view your ticket. You can also contact support with your booking ID."
+        },
+        {
+          question: "Can I access my bookings without an account?",
+          answer: "No, you need to create an account to view and manage your bookings. However, you can retrieve booking details using your booking ID and registered email by contacting support."
+        }
+      ]
+    }
+  ];
 
   const currentYear = new Date().getFullYear();
 
@@ -80,7 +211,7 @@ function Footer() {
           <div className="footer-section">
             <h3 className="footer-title">Support</h3>
             <ul className="footer-links">
-              <li><a href="#faq">FAQs</a></li>
+              <li><a href="#faq" onClick={(e) => { e.preventDefault(); setShowFAQ(true); }}>FAQs</a></li>
               <li><a href="#contact">Contact Us</a></li>
               <li><a href="#terms">Terms of Service</a></li>
               <li><a href="#privacy">Privacy Policy</a></li>
@@ -147,6 +278,131 @@ function Footer() {
           </div>
         </div>
       </div>
+
+      {/* FAQ Modal */}
+      {showFAQ && (
+        <div className="faq-modal-overlay" onClick={() => setShowFAQ(false)}>
+          <div className="faq-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="faq-modal-header">
+              <div className="faq-header-content">
+                <div className="faq-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <circle cx="12" cy="12" r="10" strokeWidth="2"/>
+                    <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    <line x1="12" y1="17" x2="12.01" y2="17" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </div>
+                <div>
+                  <h2>Frequently Asked Questions</h2>
+                  <p>Find answers to common questions about booking, payments, and more</p>
+                </div>
+              </div>
+              <button className="faq-close-btn" onClick={() => setShowFAQ(false)}>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <line x1="18" y1="6" x2="6" y2="18" strokeWidth="2" strokeLinecap="round"/>
+                  <line x1="6" y1="6" x2="18" y2="18" strokeWidth="2" strokeLinecap="round"/>
+                </svg>
+              </button>
+            </div>
+
+            <div className="faq-modal-body">
+              {faqs.map((category, categoryIndex) => (
+                <div key={categoryIndex} className="faq-category">
+                  <h3 className="faq-category-title">
+                    <span className="category-icon">
+                      {categoryIndex === 0 && (
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                          <rect x="3" y="4" width="18" height="18" rx="2" ry="2" strokeWidth="2"/>
+                          <line x1="16" y1="2" x2="16" y2="6" strokeWidth="2" strokeLinecap="round"/>
+                          <line x1="8" y1="2" x2="8" y2="6" strokeWidth="2" strokeLinecap="round"/>
+                          <line x1="3" y1="10" x2="21" y2="10" strokeWidth="2"/>
+                        </svg>
+                      )}
+                      {categoryIndex === 1 && (
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                          <rect x="1" y="4" width="22" height="16" rx="2" ry="2" strokeWidth="2"/>
+                          <line x1="1" y1="10" x2="23" y2="10" strokeWidth="2"/>
+                        </svg>
+                      )}
+                      {categoryIndex === 2 && (
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" strokeWidth="2"/>
+                          <polyline points="9 22 9 12 15 12 15 22" strokeWidth="2"/>
+                        </svg>
+                      )}
+                      {categoryIndex === 3 && (
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" strokeWidth="2"/>
+                        </svg>
+                      )}
+                      {categoryIndex === 4 && (
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" strokeWidth="2"/>
+                          <circle cx="12" cy="7" r="4" strokeWidth="2"/>
+                        </svg>
+                      )}
+                      {categoryIndex === 5 && (
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" strokeWidth="2"/>
+                        </svg>
+                      )}
+                    </span>
+                    {category.category}
+                  </h3>
+                  <div className="faq-questions">
+                    {category.questions.map((faq, index) => {
+                      const faqIndex = `${categoryIndex}-${index}`;
+                      return (
+                        <div key={index} className="faq-item">
+                          <button
+                            className={`faq-question ${expandedFAQ === faqIndex ? 'active' : ''}`}
+                            onClick={() => toggleFAQ(faqIndex)}
+                          >
+                            <span className="faq-q-icon">Q</span>
+                            <span className="faq-q-text">{faq.question}</span>
+                            <svg
+                              className={`faq-toggle-icon ${expandedFAQ === faqIndex ? 'rotated' : ''}`}
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                            >
+                              <polyline points="6 9 12 15 18 9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                            </svg>
+                          </button>
+                          <div className={`faq-answer ${expandedFAQ === faqIndex ? 'expanded' : ''}`}>
+                            <div className="faq-answer-content">
+                              <span className="faq-a-icon">A</span>
+                              <p>{faq.answer}</p>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="faq-modal-footer">
+              <p>Still have questions?</p>
+              <div className="faq-contact-options">
+                <a href="mailto:support@cinematic.com" className="faq-contact-btn">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" strokeWidth="2"/>
+                  </svg>
+                  Email Support
+                </a>
+                <a href="tel:+18001234567" className="faq-contact-btn">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" strokeWidth="2"/>
+                  </svg>
+                  Call Us
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </footer>
   );
 }
