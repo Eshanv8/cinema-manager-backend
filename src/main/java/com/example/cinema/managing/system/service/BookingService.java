@@ -1,9 +1,12 @@
 package com.example.cinema.managing.system.service;
 
+import com.example.cinema.managing.system.dto.BookingResponse;
 import com.example.cinema.managing.system.model.Booking;
+import com.example.cinema.managing.system.model.Movie;
 import com.example.cinema.managing.system.model.Seat;
 import com.example.cinema.managing.system.model.Showtime;
 import com.example.cinema.managing.system.repository.BookingRepository;
+import com.example.cinema.managing.system.repository.MovieRepository;
 import com.example.cinema.managing.system.repository.SeatRepository;
 import com.example.cinema.managing.system.repository.ShowtimeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class BookingService {
@@ -25,13 +29,26 @@ public class BookingService {
 
     @Autowired
     private ShowtimeRepository showtimeRepository;
+    
+    @Autowired
+    private MovieRepository movieRepository;
 
     public List<Booking> getAllBookings() {
         return bookingRepository.findAll();
     }
 
-    public List<Booking> getBookingsByUserId(String userId) {
-        return bookingRepository.findByUserIdOrderByBookingDateDesc(userId);
+    public List<BookingResponse> getBookingsByUserId(String userId) {
+        List<Booking> bookings = bookingRepository.findByUserIdOrderByBookingDateDesc(userId);
+        return bookings.stream()
+                .map(this::convertToResponse)
+                .collect(Collectors.toList());
+    }
+    
+    private BookingResponse convertToResponse(Booking booking) {
+        Movie movie = movieRepository.findById(booking.getMovieId()).orElse(null);
+        String movieTitle = movie != null ? movie.getTitle() : "Unknown Movie";
+        String moviePosterUrl = movie != null ? movie.getPosterUrl() : null;
+        return BookingResponse.fromBooking(booking, movieTitle, moviePosterUrl);
     }
 
     public Booking getBookingById(String id) {

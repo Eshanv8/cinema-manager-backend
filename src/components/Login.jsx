@@ -24,7 +24,7 @@ function Login({ isAdmin }) {
     setMessage('');
     try {
       const userData = isAdmin ? await adminLogin(formData) : await login(formData);
-      setMessage(`Welcome back, ${userData.username}!${userData.role === 'ADMIN' ? ' (Admin Access)' : ` You have ${userData.loyaltyPoints} loyalty points.`}`);
+      setMessage(`Welcome back, ${userData.username}!${userData.role === 'ADMIN' ? ' (Admin Access)' : ''}`);
       // Redirect based on role
       setTimeout(() => {
         if (userData.role === 'ADMIN') {
