@@ -8,6 +8,7 @@ import MoviesPage from './pages/MoviesPage';
 import MovieDetailsPage from './pages/MovieDetailsPage';
 import BookingPage from './pages/BookingPage';
 import SeatSelection from './pages/SeatSelection';
+import Food from './components/Food';
 import AdminDashboard from './pages/AdminDashboard';
 import ProfilePage from './pages/ProfilePage';
 import TrailerPlayer from './components/TrailerPlayer';
@@ -89,6 +90,14 @@ function AppContent() {
           element={
             <ProtectedRoute>
               <SeatSelection />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/food"
+          element={
+            <ProtectedRoute>
+              <Food />
             </ProtectedRoute>
           }
         />

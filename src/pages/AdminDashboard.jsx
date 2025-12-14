@@ -87,10 +87,31 @@ function AdminDashboard() {
 
   const loadFoods = async () => {
     try {
+      console.log('Loading foods...');
+      console.log('User:', user);
+      console.log('Token:', localStorage.getItem('token'));
+      
       const response = await foodService.getAllFoodsAdmin();
-      setFoods(Array.isArray(response) ? response : []);
+      console.log('Food items response:', response);
+      console.log('Is array?', Array.isArray(response));
+      console.log('Response length:', response?.length);
+      
+      if (Array.isArray(response)) {
+        setFoods(response);
+        console.log('Set foods to:', response);
+      } else {
+        console.warn('Response is not an array:', response);
+        setFoods([]);
+      }
     } catch (error) {
       console.error('Error loading foods:', error);
+      console.error('Error response:', error.response);
+      console.error('Error status:', error.response?.status);
+      console.error('Error data:', error.response?.data);
+      console.error('Error message:', error.message);
+      
+      const errorMsg = `Failed to load food items. Status: ${error.response?.status}. ${error.response?.data?.message || error.message}`;
+      alert(errorMsg);
       setFoods([]);
     }
   };
@@ -211,12 +232,21 @@ function AdminDashboard() {
   const handleAddFood = async (e) => {
     e.preventDefault();
     try {
+      // Check if user is logged in
+      const token = localStorage.getItem('token');
+      if (!token) {
+        alert('You must be logged in as admin to add food items.');
+        navigate('/');
+        return;
+      }
+
       // Convert numeric fields
       const foodData = {
         ...newFood,
         price: parseFloat(newFood.price) || 0
       };
       
+      console.log('Creating food with data:', foodData);
       await foodService.createFood(foodData);
       alert('Food item added successfully!');
       setShowAddFood(false);
@@ -234,7 +264,19 @@ function AdminDashboard() {
       loadFoods();
     } catch (error) {
       console.error('Full error:', error);
-      alert('Error adding food: ' + (error.response?.data?.message || error.message || 'Unknown error'));
+      console.error('Error response:', error.response);
+      console.error('Error request:', error.request);
+      
+      if (error.response) {
+        // Server responded with error
+        alert('Error adding food: ' + (error.response?.data?.message || error.response?.data || 'Server error'));
+      } else if (error.request) {
+        // Request made but no response
+        alert('Network Error: Cannot connect to server. Please ensure the backend is running on http://localhost:8081');
+      } else {
+        // Something else happened
+        alert('Error adding food: ' + error.message);
+      }
     }
   };
 
@@ -724,6 +766,9 @@ function AdminDashboard() {
               <button className="add-movie-btn" onClick={() => setShowAddFood(!showAddFood)}>
                 {showAddFood ? 'Cancel' : '+ Add New Food Item'}
               </button>
+              <button className="add-movie-btn" onClick={loadFoods} style={{marginLeft: '10px'}}>
+                🔄 Refresh Food Items
+              </button>
             </div>
 
             {showAddFood && (
@@ -821,40 +866,44 @@ function AdminDashboard() {
 
             <div className="movies-table">
               <h2>All Food Items</h2>
-              <table>
-                <thead>
-                  <tr>
-                    <th>Name</th>
-                    <th>Category</th>
-                    <th>Size</th>
-                    <th>Price</th>
-                    <th>Sales</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {foods.map(item => (
-                    <tr key={item.id}>
-                      <td>{item.name}</td>
-                      <td>{item.category}</td>
-                      <td>{item.size}</td>
-                      <td>Rs. {item.price}</td>
-                      <td>{item.salesCount}</td>
-                      <td>
-                        <span className={`status ${item.active ? 'showing' : 'upcoming'}`}>
-                          {item.active ? 'Active' : 'Inactive'}
-                        </span>
-                      </td>
-                      <td>
-                        <button className="delete-btn-small" onClick={() => handleDeleteFood(item.id)}>
-                          Delete
-                        </button>
-                      </td>
+              {foods.length === 0 ? (
+                <p>No food items found. Add your first food item above.</p>
+              ) : (
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Category</th>
+                      <th>Size</th>
+                      <th>Price</th>
+                      <th>Sales</th>
+                      <th>Status</th>
+                      <th>Actions</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {foods.map(item => (
+                      <tr key={item.id || item._id}>
+                        <td>{item.name}</td>
+                        <td>{item.category}</td>
+                        <td>{item.size}</td>
+                        <td>Rs. {item.price}</td>
+                        <td>{item.salesCount || 0}</td>
+                        <td>
+                          <span className={`status ${item.active ? 'showing' : 'upcoming'}`}>
+                            {item.active ? 'Active' : 'Inactive'}
+                          </span>
+                        </td>
+                        <td>
+                          <button className="delete-btn-small" onClick={() => handleDeleteFood(item.id || item._id)}>
+                            Delete
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
             </div>
           </div>
         )}
