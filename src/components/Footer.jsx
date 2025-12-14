@@ -7,6 +7,8 @@ function Footer() {
   const [subscribed, setSubscribed] = useState(false);
   const [showFAQ, setShowFAQ] = useState(false);
   const [expandedFAQ, setExpandedFAQ] = useState(null);
+  const [showTerms, setShowTerms] = useState(false);
+  const [expandedTerm, setExpandedTerm] = useState(null);
 
   const handleSubscribe = (e) => {
     e.preventDefault();
@@ -19,6 +21,10 @@ function Footer() {
 
   const toggleFAQ = (index) => {
     setExpandedFAQ(expandedFAQ === index ? null : index);
+  };
+
+  const toggleTerm = (index) => {
+    setExpandedTerm(expandedTerm === index ? null : index);
   };
 
   const faqs = [
@@ -213,7 +219,7 @@ function Footer() {
             <ul className="footer-links">
               <li><a href="#faq" onClick={(e) => { e.preventDefault(); setShowFAQ(true); }}>FAQs</a></li>
               <li><a href="#contact">Contact Us</a></li>
-              <li><a href="#terms">Terms of Service</a></li>
+              <li><a href="#terms" onClick={(e) => { e.preventDefault(); setShowTerms(true); }}>Terms of Service</a></li>
               <li><a href="#privacy">Privacy Policy</a></li>
               <li><a href="#cancellation">Cancellation Policy</a></li>
             </ul>
@@ -381,6 +387,347 @@ function Footer() {
                   </div>
                 </div>
               ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Terms of Service Modal */}
+      {showTerms && (
+        <div className="terms-modal-overlay" onClick={() => setShowTerms(false)}>
+          <div className="terms-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="terms-modal-header">
+              <div className="terms-header-content">
+                <div className="terms-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" strokeWidth="2"/>
+                    <polyline points="14 2 14 8 20 8" strokeWidth="2"/>
+                    <line x1="16" y1="13" x2="8" y2="13" strokeWidth="2"/>
+                    <line x1="16" y1="17" x2="8" y2="17" strokeWidth="2"/>
+                    <polyline points="10 9 9 9 8 9" strokeWidth="2"/>
+                  </svg>
+                </div>
+                <div>
+                  <h2>Terms of Service</h2>
+                  <p>Last Updated: December 14, 2025</p>
+                </div>
+              </div>
+              <button className="terms-close-btn" onClick={() => setShowTerms(false)}>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <line x1="18" y1="6" x2="6" y2="18" strokeWidth="2" strokeLinecap="round"/>
+                  <line x1="6" y1="6" x2="18" y2="18" strokeWidth="2" strokeLinecap="round"/>
+                </svg>
+              </button>
+            </div>
+
+            <div className="terms-modal-body">
+              {/* Introduction */}
+              <div className="terms-section">
+                <div className="terms-intro">
+                  <p>
+                    Welcome to <strong>Cinematic</strong>. These Terms of Service ("Terms") govern your access to and use of our website, 
+                    mobile application, and services (collectively, the "Services"). By accessing or using our Services, you agree to be 
+                    bound by these Terms. Please read them carefully.
+                  </p>
+                </div>
+              </div>
+
+              {/* Terms Sections */}
+              <div className="terms-section">
+                <button
+                  className={`terms-section-header ${expandedTerm === 0 ? 'active' : ''}`}
+                  onClick={() => toggleTerm(0)}
+                >
+                  <div className="terms-section-title">
+                    <span className="terms-number">1</span>
+                    <h3>Acceptance of Terms</h3>
+                  </div>
+                  <svg className={`terms-toggle-icon ${expandedTerm === 0 ? 'rotated' : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <polyline points="6 9 12 15 18 9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </button>
+                <div className={`terms-section-content ${expandedTerm === 0 ? 'expanded' : ''}`}>
+                  <p>By creating an account, making a booking, or using any of our Services, you acknowledge that you have read, understood, and agree to be bound by these Terms and our Privacy Policy. If you do not agree with any part of these Terms, you must not use our Services.</p>
+                  <p>We reserve the right to modify these Terms at any time. Your continued use of the Services after any such changes constitutes your acceptance of the new Terms.</p>
+                </div>
+              </div>
+
+              <div className="terms-section">
+                <button
+                  className={`terms-section-header ${expandedTerm === 1 ? 'active' : ''}`}
+                  onClick={() => toggleTerm(1)}
+                >
+                  <div className="terms-section-title">
+                    <span className="terms-number">2</span>
+                    <h3>User Accounts and Registration</h3>
+                  </div>
+                  <svg className={`terms-toggle-icon ${expandedTerm === 1 ? 'rotated' : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <polyline points="6 9 12 15 18 9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </button>
+                <div className={`terms-section-content ${expandedTerm === 1 ? 'expanded' : ''}`}>
+                  <ul className="terms-list">
+                    <li><strong>Account Creation:</strong> To book tickets, you must create an account by providing accurate and complete information including your name, email address, phone number, and password.</li>
+                    <li><strong>Account Security:</strong> You are responsible for maintaining the confidentiality of your account credentials and for all activities that occur under your account.</li>
+                    <li><strong>Age Requirement:</strong> You must be at least 13 years old to create an account. Users under 18 must have parental consent.</li>
+                    <li><strong>Account Termination:</strong> We reserve the right to suspend or terminate accounts that violate these Terms or engage in fraudulent activities.</li>
+                    <li><strong>One Account Per User:</strong> Each user is permitted only one account. Creating multiple accounts may result in suspension.</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div className="terms-section">
+                <button
+                  className={`terms-section-header ${expandedTerm === 2 ? 'active' : ''}`}
+                  onClick={() => toggleTerm(2)}
+                >
+                  <div className="terms-section-title">
+                    <span className="terms-number">3</span>
+                    <h3>Ticket Booking and Purchases</h3>
+                  </div>
+                  <svg className={`terms-toggle-icon ${expandedTerm === 2 ? 'rotated' : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <polyline points="6 9 12 15 18 9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </button>
+                <div className={`terms-section-content ${expandedTerm === 2 ? 'expanded' : ''}`}>
+                  <ul className="terms-list">
+                    <li><strong>Booking Process:</strong> All bookings must be completed through our website or mobile app. Ticket prices are clearly displayed before purchase confirmation.</li>
+                    <li><strong>Payment:</strong> We accept various payment methods including credit/debit cards and digital wallets. All transactions are processed securely through certified payment gateways.</li>
+                    <li><strong>Confirmation:</strong> Upon successful payment, you will receive a confirmation email with your e-ticket. This serves as proof of purchase.</li>
+                    <li><strong>Ticket Validity:</strong> Tickets are valid only for the specified date, time, and showtime. They cannot be exchanged for different shows.</li>
+                    <li><strong>Seat Selection:</strong> Seat availability is shown in real-time. Once selected and paid for, seats are reserved exclusively for you.</li>
+                    <li><strong>Pricing:</strong> All prices are in USD and include applicable taxes. Service fees and convenience charges are clearly displayed during checkout.</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div className="terms-section">
+                <button
+                  className={`terms-section-header ${expandedTerm === 3 ? 'active' : ''}`}
+                  onClick={() => toggleTerm(3)}
+                >
+                  <div className="terms-section-title">
+                    <span className="terms-number">4</span>
+                    <h3>Cancellation and Refund Policy</h3>
+                  </div>
+                  <svg className={`terms-toggle-icon ${expandedTerm === 3 ? 'rotated' : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <polyline points="6 9 12 15 18 9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </button>
+                <div className={`terms-section-content ${expandedTerm === 3 ? 'expanded' : ''}`}>
+                  <ul className="terms-list">
+                    <li><strong>Cancellation Window:</strong> Tickets can be cancelled up to 2 hours before the scheduled showtime through your account dashboard.</li>
+                    <li><strong>Refund Processing:</strong> Approved refunds are processed within 5-7 business days to the original payment method.</li>
+                    <li><strong>Cancellation Fees:</strong> A cancellation fee of 10% of the ticket price applies to all cancellations.</li>
+                    <li><strong>No Show Policy:</strong> No refunds will be issued for missed shows or late arrivals.</li>
+                    <li><strong>Technical Issues:</strong> If a show is cancelled due to technical problems, full refunds will be provided automatically.</li>
+                    <li><strong>Force Majeure:</strong> In case of unforeseen circumstances (natural disasters, pandemics), we will provide refunds or credits at our discretion.</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div className="terms-section">
+                <button
+                  className={`terms-section-header ${expandedTerm === 4 ? 'active' : ''}`}
+                  onClick={() => toggleTerm(4)}
+                >
+                  <div className="terms-section-title">
+                    <span className="terms-number">5</span>
+                    <h3>Theater Rules and Conduct</h3>
+                  </div>
+                  <svg className={`terms-toggle-icon ${expandedTerm === 4 ? 'rotated' : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <polyline points="6 9 12 15 18 9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </button>
+                <div className={`terms-section-content ${expandedTerm === 4 ? 'expanded' : ''}`}>
+                  <ul className="terms-list">
+                    <li><strong>Entry Requirements:</strong> Valid e-ticket or booking confirmation must be presented at theater entrance. Photo ID may be required for age-restricted films.</li>
+                    <li><strong>Punctuality:</strong> Please arrive 15 minutes before showtime. Late entry may be denied to avoid disturbing other patrons.</li>
+                    <li><strong>Prohibited Items:</strong> Outside food, beverages, weapons, recording devices, and hazardous materials are strictly prohibited.</li>
+                    <li><strong>Recording Ban:</strong> Recording, photographing, or live-streaming any portion of the movie is illegal and will result in immediate expulsion and legal action.</li>
+                    <li><strong>Behavior Standards:</strong> Disruptive behavior including loud talking, phone use, or harassment will not be tolerated. Staff may remove violators without refund.</li>
+                    <li><strong>Age Restrictions:</strong> Age-restricted content ratings (PG-13, R) will be strictly enforced. Appropriate ID is required.</li>
+                    <li><strong>Accessibility:</strong> We provide wheelchair-accessible seating and assistive listening devices upon request.</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div className="terms-section">
+                <button
+                  className={`terms-section-header ${expandedTerm === 5 ? 'active' : ''}`}
+                  onClick={() => toggleTerm(5)}
+                >
+                  <div className="terms-section-title">
+                    <span className="terms-number">6</span>
+                    <h3>Loyalty Program</h3>
+                  </div>
+                  <svg className={`terms-toggle-icon ${expandedTerm === 5 ? 'rotated' : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <polyline points="6 9 12 15 18 9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </button>
+                <div className={`terms-section-content ${expandedTerm === 5 ? 'expanded' : ''}`}>
+                  <ul className="terms-list">
+                    <li><strong>Earning Points:</strong> Members earn 10 points per dollar spent on tickets, food, and merchandise.</li>
+                    <li><strong>Redemption:</strong> Points can be redeemed for discounts, free tickets, and exclusive perks as specified in the rewards catalog.</li>
+                    <li><strong>Point Validity:</strong> Points expire 12 months from the date of earning unless otherwise stated.</li>
+                    <li><strong>Non-Transferable:</strong> Loyalty points are non-transferable and cannot be converted to cash.</li>
+                    <li><strong>Program Changes:</strong> We reserve the right to modify or discontinue the loyalty program with 30 days notice.</li>
+                    <li><strong>Fraud Prevention:</strong> Accounts found manipulating the system will have points forfeited and may be permanently banned.</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div className="terms-section">
+                <button
+                  className={`terms-section-header ${expandedTerm === 6 ? 'active' : ''}`}
+                  onClick={() => toggleTerm(6)}
+                >
+                  <div className="terms-section-title">
+                    <span className="terms-number">7</span>
+                    <h3>Intellectual Property Rights</h3>
+                  </div>
+                  <svg className={`terms-toggle-icon ${expandedTerm === 6 ? 'rotated' : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <polyline points="6 9 12 15 18 9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </button>
+                <div className={`terms-section-content ${expandedTerm === 6 ? 'expanded' : ''}`}>
+                  <p>All content on our website and app, including text, graphics, logos, images, video clips, and software, is the property of Cinematic or its licensors and is protected by copyright, trademark, and other intellectual property laws.</p>
+                  <ul className="terms-list">
+                    <li><strong>License:</strong> We grant you a limited, non-exclusive, non-transferable license to access and use our Services for personal, non-commercial purposes.</li>
+                    <li><strong>Restrictions:</strong> You may not copy, modify, distribute, sell, or lease any part of our Services without explicit written permission.</li>
+                    <li><strong>Trademarks:</strong> Cinematic name, logo, and related marks are our trademarks and may not be used without permission.</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div className="terms-section">
+                <button
+                  className={`terms-section-header ${expandedTerm === 7 ? 'active' : ''}`}
+                  onClick={() => toggleTerm(7)}
+                >
+                  <div className="terms-section-title">
+                    <span className="terms-number">8</span>
+                    <h3>Privacy and Data Protection</h3>
+                  </div>
+                  <svg className={`terms-toggle-icon ${expandedTerm === 7 ? 'rotated' : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <polyline points="6 9 12 15 18 9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </button>
+                <div className={`terms-section-content ${expandedTerm === 7 ? 'expanded' : ''}`}>
+                  <p>Your privacy is important to us. Our Privacy Policy explains how we collect, use, and protect your personal information. By using our Services, you consent to our data practices as described in our Privacy Policy.</p>
+                  <ul className="terms-list">
+                    <li><strong>Data Collection:</strong> We collect personal information necessary for account management, bookings, and service improvement.</li>
+                    <li><strong>Data Security:</strong> We implement industry-standard security measures to protect your information from unauthorized access.</li>
+                    <li><strong>Third-Party Services:</strong> Payment processing and analytics services may have access to your data as required for their functionality.</li>
+                    <li><strong>Marketing:</strong> You may opt out of marketing communications at any time through your account settings.</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div className="terms-section">
+                <button
+                  className={`terms-section-header ${expandedTerm === 8 ? 'active' : ''}`}
+                  onClick={() => toggleTerm(8)}
+                >
+                  <div className="terms-section-title">
+                    <span className="terms-number">9</span>
+                    <h3>Limitation of Liability</h3>
+                  </div>
+                  <svg className={`terms-toggle-icon ${expandedTerm === 8 ? 'rotated' : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <polyline points="6 9 12 15 18 9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </button>
+                <div className={`terms-section-content ${expandedTerm === 8 ? 'expanded' : ''}`}>
+                  <p>To the fullest extent permitted by law, Cinematic shall not be liable for any indirect, incidental, special, consequential, or punitive damages resulting from your use or inability to use our Services, including but not limited to:</p>
+                  <ul className="terms-list">
+                    <li>Loss of profits, data, or business opportunities</li>
+                    <li>Service interruptions or errors</li>
+                    <li>Unauthorized access to your account</li>
+                    <li>Personal injury or property damage at our theaters (covered by separate liability insurance)</li>
+                  </ul>
+                  <p>Our total liability for any claims arising from these Terms or your use of Services shall not exceed the amount you paid us in the 12 months preceding the claim.</p>
+                </div>
+              </div>
+
+              <div className="terms-section">
+                <button
+                  className={`terms-section-header ${expandedTerm === 9 ? 'active' : ''}`}
+                  onClick={() => toggleTerm(9)}
+                >
+                  <div className="terms-section-title">
+                    <span className="terms-number">10</span>
+                    <h3>Dispute Resolution and Governing Law</h3>
+                  </div>
+                  <svg className={`terms-toggle-icon ${expandedTerm === 9 ? 'rotated' : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <polyline points="6 9 12 15 18 9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </button>
+                <div className={`terms-section-content ${expandedTerm === 9 ? 'expanded' : ''}`}>
+                  <ul className="terms-list">
+                    <li><strong>Governing Law:</strong> These Terms are governed by the laws of the United States, without regard to conflict of law provisions.</li>
+                    <li><strong>Informal Resolution:</strong> Before pursuing formal legal action, you agree to contact us to attempt to resolve the dispute informally.</li>
+                    <li><strong>Arbitration:</strong> Any disputes not resolved informally shall be resolved through binding arbitration in accordance with the rules of the American Arbitration Association.</li>
+                    <li><strong>Class Action Waiver:</strong> You agree to resolve disputes individually and waive the right to participate in class actions.</li>
+                    <li><strong>Venue:</strong> Any legal proceedings must be brought in courts located in our jurisdiction.</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div className="terms-section">
+                <button
+                  className={`terms-section-header ${expandedTerm === 10 ? 'active' : ''}`}
+                  onClick={() => toggleTerm(10)}
+                >
+                  <div className="terms-section-title">
+                    <span className="terms-number">11</span>
+                    <h3>Changes to Terms and Services</h3>
+                  </div>
+                  <svg className={`terms-toggle-icon ${expandedTerm === 10 ? 'rotated' : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <polyline points="6 9 12 15 18 9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </button>
+                <div className={`terms-section-content ${expandedTerm === 10 ? 'expanded' : ''}`}>
+                  <p>We reserve the right to modify, suspend, or discontinue any aspect of our Services at any time. We will notify users of material changes to these Terms via email or through prominent notices on our platform.</p>
+                  <p>Continued use of our Services after such modifications constitutes acceptance of the updated Terms. If you do not agree with the changes, you must discontinue using our Services.</p>
+                </div>
+              </div>
+
+              <div className="terms-section">
+                <button
+                  className={`terms-section-header ${expandedTerm === 11 ? 'active' : ''}`}
+                  onClick={() => toggleTerm(11)}
+                >
+                  <div className="terms-section-title">
+                    <span className="terms-number">12</span>
+                    <h3>Contact Information</h3>
+                  </div>
+                  <svg className={`terms-toggle-icon ${expandedTerm === 11 ? 'rotated' : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <polyline points="6 9 12 15 18 9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </button>
+                <div className={`terms-section-content ${expandedTerm === 11 ? 'expanded' : ''}`}>
+                  <p>If you have any questions, concerns, or feedback regarding these Terms of Service, please contact us:</p>
+                  <div className="terms-contact-info">
+                    <p><strong>Email:</strong> legal@cinematic.com</p>
+                    <p><strong>Phone:</strong> +1 (800) 123-4567</p>
+                    <p><strong>Mailing Address:</strong> Cinematic Legal Department, 123 Cinema Boulevard, Los Angeles, CA 90028, USA</p>
+                    <p><strong>Business Hours:</strong> Monday - Friday, 9:00 AM - 6:00 PM PST</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Acknowledgment */}
+              <div className="terms-acknowledgment">
+                <div className="acknowledgment-box">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" strokeWidth="2"/>
+                  </svg>
+                  <div>
+                    <h4>Acknowledgment</h4>
+                    <p>By using Cinematic's services, you acknowledge that you have read, understood, and agree to be bound by these Terms of Service and our Privacy Policy.</p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
