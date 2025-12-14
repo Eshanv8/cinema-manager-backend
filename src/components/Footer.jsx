@@ -9,6 +9,8 @@ function Footer() {
   const [expandedFAQ, setExpandedFAQ] = useState(null);
   const [showTerms, setShowTerms] = useState(false);
   const [expandedTerm, setExpandedTerm] = useState(null);
+  const [showPrivacy, setShowPrivacy] = useState(false);
+  const [expandedPrivacy, setExpandedPrivacy] = useState(null);
 
   const handleSubscribe = (e) => {
     e.preventDefault();
@@ -25,6 +27,10 @@ function Footer() {
 
   const toggleTerm = (index) => {
     setExpandedTerm(expandedTerm === index ? null : index);
+  };
+
+  const togglePrivacy = (index) => {
+    setExpandedPrivacy(expandedPrivacy === index ? null : index);
   };
 
   const faqs = [
@@ -220,7 +226,7 @@ function Footer() {
               <li><a href="#faq" onClick={(e) => { e.preventDefault(); setShowFAQ(true); }}>FAQs</a></li>
               <li><a href="#contact">Contact Us</a></li>
               <li><a href="#terms" onClick={(e) => { e.preventDefault(); setShowTerms(true); }}>Terms of Service</a></li>
-              <li><a href="#privacy">Privacy Policy</a></li>
+              <li><a href="#privacy" onClick={(e) => { e.preventDefault(); setShowPrivacy(true); }}>Privacy Policy</a></li>
               <li><a href="#cancellation">Cancellation Policy</a></li>
             </ul>
           </div>
@@ -725,6 +731,409 @@ function Footer() {
                   <div>
                     <h4>Acknowledgment</h4>
                     <p>By using Cinematic's services, you acknowledge that you have read, understood, and agree to be bound by these Terms of Service and our Privacy Policy.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Privacy Policy Modal */}
+      {showPrivacy && (
+        <div className="privacy-modal-overlay" onClick={() => setShowPrivacy(false)}>
+          <div className="privacy-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="privacy-modal-header">
+              <div className="privacy-header-content">
+                <div className="privacy-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" strokeWidth="2"/>
+                    <path d="M9 12l2 2 4-4" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </div>
+                <div>
+                  <h2>Privacy Policy</h2>
+                  <p>Last Updated: December 14, 2025</p>
+                </div>
+              </div>
+              <button className="privacy-close-btn" onClick={() => setShowPrivacy(false)}>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <line x1="18" y1="6" x2="6" y2="18" strokeWidth="2" strokeLinecap="round"/>
+                  <line x1="6" y1="6" x2="18" y2="18" strokeWidth="2" strokeLinecap="round"/>
+                </svg>
+              </button>
+            </div>
+
+            <div className="privacy-modal-body">
+              {/* Introduction */}
+              <div className="privacy-section">
+                <div className="privacy-intro">
+                  <p>
+                    At <strong>Cinematic</strong>, we are committed to protecting your privacy and ensuring the security of your personal information. 
+                    This Privacy Policy explains how we collect, use, disclose, and safeguard your data when you use our website, mobile application, 
+                    and services. By using our Services, you consent to the data practices described in this policy.
+                  </p>
+                </div>
+              </div>
+
+              {/* Privacy Sections */}
+              <div className="privacy-section">
+                <button
+                  className={`privacy-section-header ${expandedPrivacy === 0 ? 'active' : ''}`}
+                  onClick={() => togglePrivacy(0)}
+                >
+                  <div className="privacy-section-title">
+                    <span className="privacy-number">1</span>
+                    <h3>Information We Collect</h3>
+                  </div>
+                  <svg className={`privacy-toggle-icon ${expandedPrivacy === 0 ? 'rotated' : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <polyline points="6 9 12 15 18 9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </button>
+                <div className={`privacy-section-content ${expandedPrivacy === 0 ? 'expanded' : ''}`}>
+                  <h4 className="privacy-subsection">Personal Information You Provide</h4>
+                  <ul className="privacy-list">
+                    <li><strong>Account Information:</strong> Name, email address, phone number, password, date of birth</li>
+                    <li><strong>Payment Information:</strong> Credit/debit card details, billing address (processed securely through third-party payment processors)</li>
+                    <li><strong>Profile Information:</strong> Profile picture, preferences, movie ratings and reviews</li>
+                    <li><strong>Communication Data:</strong> Customer support inquiries, feedback, and correspondence with us</li>
+                  </ul>
+                  <h4 className="privacy-subsection">Information Collected Automatically</h4>
+                  <ul className="privacy-list">
+                    <li><strong>Device Information:</strong> IP address, browser type, operating system, device identifiers</li>
+                    <li><strong>Usage Data:</strong> Pages viewed, features used, time spent on pages, booking history</li>
+                    <li><strong>Location Data:</strong> Geographic location based on IP address or device settings (with permission)</li>
+                    <li><strong>Cookies and Tracking:</strong> Session cookies, preference cookies, analytics cookies</li>
+                  </ul>
+                  <h4 className="privacy-subsection">Information from Third Parties</h4>
+                  <ul className="privacy-list">
+                    <li><strong>Social Media:</strong> Information from social login providers (Facebook, Google, Apple)</li>
+                    <li><strong>Payment Processors:</strong> Transaction confirmation and payment status</li>
+                    <li><strong>Marketing Partners:</strong> Aggregated demographic and interest data</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div className="privacy-section">
+                <button
+                  className={`privacy-section-header ${expandedPrivacy === 1 ? 'active' : ''}`}
+                  onClick={() => togglePrivacy(1)}
+                >
+                  <div className="privacy-section-title">
+                    <span className="privacy-number">2</span>
+                    <h3>How We Use Your Information</h3>
+                  </div>
+                  <svg className={`privacy-toggle-icon ${expandedPrivacy === 1 ? 'rotated' : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <polyline points="6 9 12 15 18 9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </button>
+                <div className={`privacy-section-content ${expandedPrivacy === 1 ? 'expanded' : ''}`}>
+                  <p>We use your personal information for the following purposes:</p>
+                  <ul className="privacy-list">
+                    <li><strong>Service Delivery:</strong> Process bookings, manage your account, send e-tickets and confirmations</li>
+                    <li><strong>Payment Processing:</strong> Complete transactions, issue refunds, prevent fraud</li>
+                    <li><strong>Communication:</strong> Send booking confirmations, updates, customer support responses, and service notifications</li>
+                    <li><strong>Personalization:</strong> Recommend movies, customize content, remember preferences</li>
+                    <li><strong>Marketing:</strong> Send promotional offers, newsletters, special events (with your consent)</li>
+                    <li><strong>Analytics:</strong> Analyze usage patterns, improve services, conduct research</li>
+                    <li><strong>Security:</strong> Detect and prevent fraud, protect against security threats</li>
+                    <li><strong>Legal Compliance:</strong> Comply with legal obligations, resolve disputes, enforce agreements</li>
+                    <li><strong>Loyalty Program:</strong> Track and manage loyalty points, rewards, and benefits</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div className="privacy-section">
+                <button
+                  className={`privacy-section-header ${expandedPrivacy === 2 ? 'active' : ''}`}
+                  onClick={() => togglePrivacy(2)}
+                >
+                  <div className="privacy-section-title">
+                    <span className="privacy-number">3</span>
+                    <h3>How We Share Your Information</h3>
+                  </div>
+                  <svg className={`privacy-toggle-icon ${expandedPrivacy === 2 ? 'rotated' : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <polyline points="6 9 12 15 18 9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </button>
+                <div className={`privacy-section-content ${expandedPrivacy === 2 ? 'expanded' : ''}`}>
+                  <p>We may share your information with the following parties:</p>
+                  <ul className="privacy-list">
+                    <li><strong>Service Providers:</strong> Payment processors, email service providers, cloud hosting, analytics platforms</li>
+                    <li><strong>Business Partners:</strong> Movie distributors, concession suppliers, promotional partners</li>
+                    <li><strong>Legal Requirements:</strong> Law enforcement, government agencies, courts when legally required</li>
+                    <li><strong>Business Transfers:</strong> In case of merger, acquisition, or sale of assets</li>
+                    <li><strong>With Your Consent:</strong> Other parties when you explicitly authorize sharing</li>
+                  </ul>
+                  <p className="privacy-note"><strong>Note:</strong> We never sell your personal information to third parties for their marketing purposes.</p>
+                </div>
+              </div>
+
+              <div className="privacy-section">
+                <button
+                  className={`privacy-section-header ${expandedPrivacy === 3 ? 'active' : ''}`}
+                  onClick={() => togglePrivacy(3)}
+                >
+                  <div className="privacy-section-title">
+                    <span className="privacy-number">4</span>
+                    <h3>Cookies and Tracking Technologies</h3>
+                  </div>
+                  <svg className={`privacy-toggle-icon ${expandedPrivacy === 3 ? 'rotated' : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <polyline points="6 9 12 15 18 9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </button>
+                <div className={`privacy-section-content ${expandedPrivacy === 3 ? 'expanded' : ''}`}>
+                  <p>We use cookies and similar tracking technologies to enhance your experience:</p>
+                  <ul className="privacy-list">
+                    <li><strong>Essential Cookies:</strong> Required for basic site functionality, authentication, and security</li>
+                    <li><strong>Preference Cookies:</strong> Remember your settings, language, and customization choices</li>
+                    <li><strong>Analytics Cookies:</strong> Help us understand how visitors use our site (Google Analytics, etc.)</li>
+                    <li><strong>Marketing Cookies:</strong> Track effectiveness of advertisements and deliver personalized ads</li>
+                    <li><strong>Social Media Cookies:</strong> Enable sharing on social platforms and track social engagement</li>
+                  </ul>
+                  <p>You can control cookies through your browser settings. However, disabling certain cookies may limit functionality.</p>
+                </div>
+              </div>
+
+              <div className="privacy-section">
+                <button
+                  className={`privacy-section-header ${expandedPrivacy === 4 ? 'active' : ''}`}
+                  onClick={() => togglePrivacy(4)}
+                >
+                  <div className="privacy-section-title">
+                    <span className="privacy-number">5</span>
+                    <h3>Data Security</h3>
+                  </div>
+                  <svg className={`privacy-toggle-icon ${expandedPrivacy === 4 ? 'rotated' : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <polyline points="6 9 12 15 18 9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </button>
+                <div className={`privacy-section-content ${expandedPrivacy === 4 ? 'expanded' : ''}`}>
+                  <p>We implement comprehensive security measures to protect your personal information:</p>
+                  <ul className="privacy-list">
+                    <li><strong>Encryption:</strong> SSL/TLS encryption for data transmission, encrypted storage for sensitive data</li>
+                    <li><strong>Access Controls:</strong> Role-based access, multi-factor authentication for staff</li>
+                    <li><strong>Payment Security:</strong> PCI-DSS compliant payment processing, no storage of full card details</li>
+                    <li><strong>Regular Audits:</strong> Security assessments, vulnerability testing, penetration testing</li>
+                    <li><strong>Employee Training:</strong> Staff trained on data protection and privacy best practices</li>
+                    <li><strong>Incident Response:</strong> Protocols for detecting and responding to security breaches</li>
+                  </ul>
+                  <p className="privacy-warning">While we implement strong security measures, no system is 100% secure. Please protect your account credentials and notify us immediately of any unauthorized access.</p>
+                </div>
+              </div>
+
+              <div className="privacy-section">
+                <button
+                  className={`privacy-section-header ${expandedPrivacy === 5 ? 'active' : ''}`}
+                  onClick={() => togglePrivacy(5)}
+                >
+                  <div className="privacy-section-title">
+                    <span className="privacy-number">6</span>
+                    <h3>Your Privacy Rights</h3>
+                  </div>
+                  <svg className={`privacy-toggle-icon ${expandedPrivacy === 5 ? 'rotated' : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <polyline points="6 9 12 15 18 9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </button>
+                <div className={`privacy-section-content ${expandedPrivacy === 5 ? 'expanded' : ''}`}>
+                  <p>Depending on your location, you may have the following rights:</p>
+                  <ul className="privacy-list">
+                    <li><strong>Access:</strong> Request a copy of the personal data we hold about you</li>
+                    <li><strong>Correction:</strong> Update or correct inaccurate or incomplete information</li>
+                    <li><strong>Deletion:</strong> Request deletion of your personal data (subject to legal obligations)</li>
+                    <li><strong>Portability:</strong> Receive your data in a structured, machine-readable format</li>
+                    <li><strong>Opt-Out:</strong> Unsubscribe from marketing communications at any time</li>
+                    <li><strong>Restriction:</strong> Limit how we process your data in certain circumstances</li>
+                    <li><strong>Objection:</strong> Object to processing based on legitimate interests</li>
+                    <li><strong>Withdraw Consent:</strong> Withdraw consent for data processing where consent was required</li>
+                  </ul>
+                  <p>To exercise these rights, contact us at <strong>privacy@cinematic.com</strong> or through your account settings.</p>
+                </div>
+              </div>
+
+              <div className="privacy-section">
+                <button
+                  className={`privacy-section-header ${expandedPrivacy === 6 ? 'active' : ''}`}
+                  onClick={() => togglePrivacy(6)}
+                >
+                  <div className="privacy-section-title">
+                    <span className="privacy-number">7</span>
+                    <h3>Data Retention</h3>
+                  </div>
+                  <svg className={`privacy-toggle-icon ${expandedPrivacy === 6 ? 'rotated' : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <polyline points="6 9 12 15 18 9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </button>
+                <div className={`privacy-section-content ${expandedPrivacy === 6 ? 'expanded' : ''}`}>
+                  <p>We retain your personal information for as long as necessary to fulfill the purposes outlined in this policy:</p>
+                  <ul className="privacy-list">
+                    <li><strong>Account Data:</strong> Retained while your account is active, plus 3 years after closure</li>
+                    <li><strong>Transaction Records:</strong> Retained for 7 years for accounting and tax purposes</li>
+                    <li><strong>Marketing Data:</strong> Retained until you opt-out or unsubscribe</li>
+                    <li><strong>Legal Holds:</strong> Data related to legal disputes retained until resolution</li>
+                    <li><strong>Analytics Data:</strong> Aggregated data may be retained indefinitely</li>
+                  </ul>
+                  <p>After the retention period, we securely delete or anonymize your data.</p>
+                </div>
+              </div>
+
+              <div className="privacy-section">
+                <button
+                  className={`privacy-section-header ${expandedPrivacy === 7 ? 'active' : ''}`}
+                  onClick={() => togglePrivacy(7)}
+                >
+                  <div className="privacy-section-title">
+                    <span className="privacy-number">8</span>
+                    <h3>Children's Privacy</h3>
+                  </div>
+                  <svg className={`privacy-toggle-icon ${expandedPrivacy === 7 ? 'rotated' : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <polyline points="6 9 12 15 18 9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </button>
+                <div className={`privacy-section-content ${expandedPrivacy === 7 ? 'expanded' : ''}`}>
+                  <p>Our Services are not directed to children under 13 years of age. We do not knowingly collect personal information from children under 13.</p>
+                  <ul className="privacy-list">
+                    <li><strong>Age Verification:</strong> Users must be at least 13 to create an account</li>
+                    <li><strong>Parental Consent:</strong> Users under 18 should have parental consent</li>
+                    <li><strong>Discovery:</strong> If we learn we have collected data from a child under 13, we will delete it immediately</li>
+                    <li><strong>Parent Rights:</strong> Parents can request deletion of their child's information by contacting us</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div className="privacy-section">
+                <button
+                  className={`privacy-section-header ${expandedPrivacy === 8 ? 'active' : ''}`}
+                  onClick={() => togglePrivacy(8)}
+                >
+                  <div className="privacy-section-title">
+                    <span className="privacy-number">9</span>
+                    <h3>International Data Transfers</h3>
+                  </div>
+                  <svg className={`privacy-toggle-icon ${expandedPrivacy === 8 ? 'rotated' : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <polyline points="6 9 12 15 18 9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </button>
+                <div className={`privacy-section-content ${expandedPrivacy === 8 ? 'expanded' : ''}`}>
+                  <p>Your information may be transferred to and processed in countries other than your own. We ensure appropriate safeguards:</p>
+                  <ul className="privacy-list">
+                    <li><strong>Data Transfer Agreements:</strong> Standard contractual clauses approved by regulatory authorities</li>
+                    <li><strong>Privacy Shield:</strong> Compliance with applicable data transfer frameworks</li>
+                    <li><strong>Adequate Protection:</strong> Transfers only to countries with adequate data protection laws</li>
+                    <li><strong>Your Consent:</strong> We obtain consent where required for international transfers</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div className="privacy-section">
+                <button
+                  className={`privacy-section-header ${expandedPrivacy === 9 ? 'active' : ''}`}
+                  onClick={() => togglePrivacy(9)}
+                >
+                  <div className="privacy-section-title">
+                    <span className="privacy-number">10</span>
+                    <h3>Third-Party Links and Services</h3>
+                  </div>
+                  <svg className={`privacy-toggle-icon ${expandedPrivacy === 9 ? 'rotated' : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <polyline points="6 9 12 15 18 9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </button>
+                <div className={`privacy-section-content ${expandedPrivacy === 9 ? 'expanded' : ''}`}>
+                  <p>Our Services may contain links to third-party websites, applications, or services. We are not responsible for the privacy practices of these third parties.</p>
+                  <ul className="privacy-list">
+                    <li><strong>External Links:</strong> Third-party sites have their own privacy policies</li>
+                    <li><strong>Social Media:</strong> Social platforms have separate data collection practices</li>
+                    <li><strong>Payment Processors:</strong> Follow the privacy policies of payment providers</li>
+                    <li><strong>Recommendations:</strong> Review privacy policies before sharing information with third parties</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div className="privacy-section">
+                <button
+                  className={`privacy-section-header ${expandedPrivacy === 10 ? 'active' : ''}`}
+                  onClick={() => togglePrivacy(10)}
+                >
+                  <div className="privacy-section-title">
+                    <span className="privacy-number">11</span>
+                    <h3>California Privacy Rights (CCPA)</h3>
+                  </div>
+                  <svg className={`privacy-toggle-icon ${expandedPrivacy === 10 ? 'rotated' : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <polyline points="6 9 12 15 18 9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </button>
+                <div className={`privacy-section-content ${expandedPrivacy === 10 ? 'expanded' : ''}`}>
+                  <p>California residents have additional rights under the California Consumer Privacy Act (CCPA):</p>
+                  <ul className="privacy-list">
+                    <li><strong>Right to Know:</strong> Information about personal data collected, used, and shared</li>
+                    <li><strong>Right to Delete:</strong> Request deletion of personal information</li>
+                    <li><strong>Right to Opt-Out:</strong> Opt-out of the sale of personal information (we don't sell data)</li>
+                    <li><strong>Right to Non-Discrimination:</strong> Equal service regardless of privacy choices</li>
+                    <li><strong>Authorized Agent:</strong> Designate an agent to make requests on your behalf</li>
+                  </ul>
+                  <p>To exercise CCPA rights, email <strong>privacy@cinematic.com</strong> with "California Privacy Rights" in the subject line.</p>
+                </div>
+              </div>
+
+              <div className="privacy-section">
+                <button
+                  className={`privacy-section-header ${expandedPrivacy === 11 ? 'active' : ''}`}
+                  onClick={() => togglePrivacy(11)}
+                >
+                  <div className="privacy-section-title">
+                    <span className="privacy-number">12</span>
+                    <h3>Changes to Privacy Policy</h3>
+                  </div>
+                  <svg className={`privacy-toggle-icon ${expandedPrivacy === 11 ? 'rotated' : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <polyline points="6 9 12 15 18 9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </button>
+                <div className={`privacy-section-content ${expandedPrivacy === 11 ? 'expanded' : ''}`}>
+                  <p>We may update this Privacy Policy from time to time to reflect changes in our practices, technology, legal requirements, or other factors.</p>
+                  <ul className="privacy-list">
+                    <li><strong>Notification:</strong> We will notify you of material changes via email or prominent notice on our platform</li>
+                    <li><strong>Review Date:</strong> The "Last Updated" date at the top indicates when changes were last made</li>
+                    <li><strong>Continued Use:</strong> Using our Services after changes constitutes acceptance of the updated policy</li>
+                    <li><strong>Archive:</strong> Previous versions available upon request</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div className="privacy-section">
+                <button
+                  className={`privacy-section-header ${expandedPrivacy === 12 ? 'active' : ''}`}
+                  onClick={() => togglePrivacy(12)}
+                >
+                  <div className="privacy-section-title">
+                    <span className="privacy-number">13</span>
+                    <h3>Contact Us About Privacy</h3>
+                  </div>
+                  <svg className={`privacy-toggle-icon ${expandedPrivacy === 12 ? 'rotated' : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <polyline points="6 9 12 15 18 9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </button>
+                <div className={`privacy-section-content ${expandedPrivacy === 12 ? 'expanded' : ''}`}>
+                  <p>If you have questions, concerns, or requests regarding this Privacy Policy or our data practices:</p>
+                  <div className="privacy-contact-info">
+                    <p><strong>Privacy Team Email:</strong> privacy@cinematic.com</p>
+                    <p><strong>Data Protection Officer:</strong> dpo@cinematic.com</p>
+                    <p><strong>Phone:</strong> +1 (800) 123-4567</p>
+                    <p><strong>Mailing Address:</strong> Cinematic Privacy Department, 123 Cinema Boulevard, Los Angeles, CA 90028, USA</p>
+                    <p><strong>Response Time:</strong> We respond to privacy requests within 30 days</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Consent Statement */}
+              <div className="privacy-consent">
+                <div className="consent-box">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" strokeWidth="2"/>
+                    <path d="M9 12l2 2 4-4" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                  <div>
+                    <h4>Your Consent</h4>
+                    <p>By using Cinematic's services, you acknowledge that you have read and understood this Privacy Policy and consent to the collection, use, and disclosure of your personal information as described herein.</p>
                   </div>
                 </div>
               </div>
