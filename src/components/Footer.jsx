@@ -13,6 +13,16 @@ function Footer() {
   const [expandedPrivacy, setExpandedPrivacy] = useState(null);
   const [showCancellation, setShowCancellation] = useState(false);
   const [expandedCancellation, setExpandedCancellation] = useState(null);
+  const [showContact, setShowContact] = useState(false);
+  const [contactForm, setContactForm] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    subject: '',
+    message: ''
+  });
+  const [contactSubmitting, setContactSubmitting] = useState(false);
+  const [contactSubmitted, setContactSubmitted] = useState(false);
 
   const handleSubscribe = (e) => {
     e.preventDefault();
@@ -37,6 +47,48 @@ function Footer() {
 
   const toggleCancellation = (index) => {
     setExpandedCancellation(expandedCancellation === index ? null : index);
+  };
+
+  const handleContactChange = (e) => {
+    setContactForm({
+      ...contactForm,
+      [e.target.name]: e.target.value
+    });
+  };
+
+  const handleContactSubmit = async (e) => {
+    e.preventDefault();
+    setContactSubmitting(true);
+
+    try {
+      const response = await fetch('http://localhost:8081/api/contacts', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(contactForm)
+      });
+
+      if (response.ok) {
+        setContactSubmitted(true);
+        setContactForm({
+          name: '',
+          email: '',
+          phone: '',
+          subject: '',
+          message: ''
+        });
+        setTimeout(() => {
+          setContactSubmitted(false);
+          setShowContact(false);
+        }, 3000);
+      }
+    } catch (error) {
+      console.error('Error submitting contact form:', error);
+      alert('Failed to submit contact form. Please try again.');
+    } finally {
+      setContactSubmitting(false);
+    }
   };
 
   const faqs = [
@@ -230,7 +282,7 @@ function Footer() {
             <h3 className="footer-title">Support</h3>
             <ul className="footer-links">
               <li><a href="#faq" onClick={(e) => { e.preventDefault(); setShowFAQ(true); }}>FAQs</a></li>
-              <li><a href="#contact">Contact Us</a></li>
+              <li><a href="#contact" onClick={(e) => { e.preventDefault(); setShowContact(true); }}>Contact Us</a></li>
               <li><a href="#terms" onClick={(e) => { e.preventDefault(); setShowTerms(true); }}>Terms of Service</a></li>
               <li><a href="#privacy" onClick={(e) => { e.preventDefault(); setShowPrivacy(true); }}>Privacy Policy</a></li>
               <li><a href="#cancellation" onClick={(e) => { e.preventDefault(); setShowCancellation(true); }}>Cancellation Policy</a></li>
@@ -1533,6 +1585,183 @@ function Footer() {
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Contact Us Modal */}
+      {showContact && (
+        <div className="contact-modal-overlay" onClick={() => setShowContact(false)}>
+          <div className="contact-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="contact-modal-header">
+              <div className="contact-header-content">
+                <div className="contact-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </div>
+                <div>
+                  <h2>Contact Us</h2>
+                  <p>We'd love to hear from you</p>
+                </div>
+              </div>
+              <button className="contact-close-btn" onClick={() => setShowContact(false)}>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <line x1="18" y1="6" x2="6" y2="18" strokeWidth="2" strokeLinecap="round"/>
+                  <line x1="6" y1="6" x2="18" y2="18" strokeWidth="2" strokeLinecap="round"/>
+                </svg>
+              </button>
+            </div>
+
+            <div className="contact-modal-body">
+              {contactSubmitted ? (
+                <div className="contact-success">
+                  <div className="success-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <circle cx="12" cy="12" r="10" strokeWidth="2"/>
+                      <path d="M9 12l2 2 4-4" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </div>
+                  <h3>Message Sent Successfully!</h3>
+                  <p>Thank you for contacting us. We'll get back to you within 24-48 hours.</p>
+                </div>
+              ) : (
+                <form className="contact-form" onSubmit={handleContactSubmit}>
+                  <div className="contact-intro">
+                    <p>Have a question, suggestion, or need support? Fill out the form below and our team will respond as soon as possible.</p>
+                  </div>
+
+                  <div className="form-row">
+                    <div className="form-group">
+                      <label htmlFor="name">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                          <circle cx="12" cy="7" r="4" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                        Full Name *
+                      </label>
+                      <input
+                        type="text"
+                        id="name"
+                        name="name"
+                        value={contactForm.name}
+                        onChange={handleContactChange}
+                        placeholder="Enter your full name"
+                        required
+                      />
+                    </div>
+
+                    <div className="form-group">
+                      <label htmlFor="email">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                          <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" strokeWidth="2"/>
+                          <polyline points="22,6 12,13 2,6" strokeWidth="2"/>
+                        </svg>
+                        Email Address *
+                      </label>
+                      <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        value={contactForm.email}
+                        onChange={handleContactChange}
+                        placeholder="your.email@example.com"
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <div className="form-row">
+                    <div className="form-group">
+                      <label htmlFor="phone">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                        Phone Number
+                      </label>
+                      <input
+                        type="tel"
+                        id="phone"
+                        name="phone"
+                        value={contactForm.phone}
+                        onChange={handleContactChange}
+                        placeholder="+1 (555) 000-0000"
+                      />
+                    </div>
+
+                    <div className="form-group">
+                      <label htmlFor="subject">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                          <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" strokeWidth="2"/>
+                          <polyline points="22,6 12,13 2,6" strokeWidth="2"/>
+                        </svg>
+                        Subject *
+                      </label>
+                      <select
+                        id="subject"
+                        name="subject"
+                        value={contactForm.subject}
+                        onChange={handleContactChange}
+                        required
+                      >
+                        <option value="">Select a subject</option>
+                        <option value="General Inquiry">General Inquiry</option>
+                        <option value="Booking Support">Booking Support</option>
+                        <option value="Technical Issue">Technical Issue</option>
+                        <option value="Refund Request">Refund Request</option>
+                        <option value="Feedback">Feedback</option>
+                        <option value="Partnership">Partnership</option>
+                        <option value="Other">Other</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="form-group">
+                    <label htmlFor="message">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                      Message *
+                    </label>
+                    <textarea
+                      id="message"
+                      name="message"
+                      value={contactForm.message}
+                      onChange={handleContactChange}
+                      placeholder="Tell us more about your inquiry..."
+                      rows="5"
+                      required
+                    ></textarea>
+                  </div>
+
+                  <div className="contact-info-box">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <circle cx="12" cy="12" r="10" strokeWidth="2"/>
+                      <line x1="12" y1="16" x2="12" y2="12" strokeWidth="2" strokeLinecap="round"/>
+                      <line x1="12" y1="8" x2="12.01" y2="8" strokeWidth="2" strokeLinecap="round"/>
+                    </svg>
+                    <p>We typically respond within <strong>24-48 hours</strong>. For urgent matters, please call us at <strong>+1 (800) 123-4567</strong>.</p>
+                  </div>
+
+                  <button type="submit" className="contact-submit-btn" disabled={contactSubmitting}>
+                    {contactSubmitting ? (
+                      <>
+                        <span className="spinner"></span>
+                        Sending...
+                      </>
+                    ) : (
+                      <>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                          <line x1="22" y1="2" x2="11" y2="13" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                          <polygon points="22 2 15 22 11 13 2 9 22 2" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                        Send Message
+                      </>
+                    )}
+                  </button>
+                </form>
+              )}
             </div>
           </div>
         </div>
