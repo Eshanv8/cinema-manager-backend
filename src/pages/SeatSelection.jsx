@@ -1,22 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import seatService from '../services/seatService';
-import bookingService from '../services/bookingService';
-import { useAuth } from '../context/AuthContext';
 import './SeatSelection.css';
 
 const SeatSelection = () => {
   const { showtimeId } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
-  const { user } = useAuth();
   
   const { movie, showtime, ticketQuantity } = location.state || {};
   
   const [seats, setSeats] = useState([]);
   const [selectedSeats, setSelectedSeats] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [bookingInProgress, setBookingInProgress] = useState(false);
 
   useEffect(() => {
     if (!movie || !showtime || !ticketQuantity) {
@@ -37,14 +33,12 @@ const SeatSelection = () => {
 
   const loadSeats = async () => {
     try {
-      if (!loading) {
-        // Silent refresh - don't show loading state on polls
-        const seatsData = await seatService.getSeatsByShowtime(showtimeId);
-        const updatedSeats = seatsData;
-        
-        // Check if any selected seats were booked by someone else
+      const seatsData = await seatService.getSeatsByShowtime(showtimeId);
+      
+      if (seats.length > 0) {
+        // This is a refresh - check if any selected seats were booked by someone else
         const nowUnavailable = selectedSeats.filter(seat => {
-          const updatedSeat = updatedSeats.find(s => s.id === seat.id);
+          const updatedSeat = seatsData.find(s => s.id === seat.id);
           return updatedSeat && updatedSeat.status === 'BOOKED';
         });
         
@@ -55,21 +49,14 @@ const SeatSelection = () => {
             !nowUnavailable.find(us => us.id === seat.id)
           ));
         }
-        
-        setSeats(updatedSeats);
-      } else {
-        // Initial load
-        setLoading(true);
-        const seatsData = await seatService.getSeatsByShowtime(showtimeId);
-        setSeats(seatsData);
-        setLoading(false);
       }
+      
+      setSeats(seatsData);
+      setLoading(false);
     } catch (error) {
       console.error('Error loading seats:', error);
-      if (loading) {
-        alert('Failed to load seats. Please try again.');
-        setLoading(false);
-      }
+      alert('Failed to load seats. Please try again.');
+      setLoading(false);
     }
   };
 
@@ -107,37 +94,22 @@ const SeatSelection = () => {
     return selectedSeats.length * showtime.price;
   };
 
-  const handleConfirmBooking = async () => {
+  const handleConfirmBooking = () => {
     if (selectedSeats.length !== ticketQuantity) {
       alert(`Please select exactly ${ticketQuantity} seats`);
       return;
     }
 
-    try {
-      setBookingInProgress(true);
-      
-      const bookingData = {
-        userId: user.id,
-        movieId: movie.id,
-        showtimeId: showtimeId,
-        seatIds: selectedSeats.map(seat => seat.id),
-        seatNumbers: selectedSeats.map(seat => `${seat.row}${seat.column}`),
-        numberOfSeats: selectedSeats.length,
-        totalAmount: calculateTotalPrice(),
-        showDate: new Date(showtime.showDateTime)
-      };
-
-      const response = await bookingService.createBooking(bookingData);
-      
-      alert(`Booking confirmed! Your booking code is: ${response.bookingCode}\nSeats: ${bookingData.seatNumbers.join(', ')}`);
-      navigate('/home');
-    } catch (error) {
-      console.error('Error creating booking:', error);
-      const errorMessage = error.response?.data?.message || error.message || 'Failed to create booking';
-      alert(`Booking failed: ${errorMessage}`);
-    } finally {
-      setBookingInProgress(false);
-    }
+    // Navigate to food selection page with booking data
+    navigate('/food', {
+      state: {
+        movie,
+        showtime,
+        selectedSeats,
+        ticketQuantity,
+        showtimeId
+      }
+    });
   };
 
   // Group seats by row
@@ -238,9 +210,9 @@ const SeatSelection = () => {
           <button 
             className="confirm-btn" 
             onClick={handleConfirmBooking}
-            disabled={selectedSeats.length !== ticketQuantity || bookingInProgress}
+            disabled={selectedSeats.length !== ticketQuantity}
           >
-            {bookingInProgress ? 'Processing...' : 'Confirm Booking'}
+            Continue to Food Selection
           </button>
         </div>
       </div>
