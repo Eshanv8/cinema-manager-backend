@@ -1,5 +1,6 @@
 package com.example.cinema.managing.system.controller;
 
+import com.example.cinema.managing.system.dto.BookingResponse;
 import com.example.cinema.managing.system.model.Booking;
 import com.example.cinema.managing.system.service.BookingService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,7 @@ public class BookingController {
 
     @GetMapping("/user/{userId}")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public ResponseEntity<List<Booking>> getUserBookings(@PathVariable String userId) {
+    public ResponseEntity<List<BookingResponse>> getUserBookings(@PathVariable String userId) {
         return ResponseEntity.ok(bookingService.getBookingsByUserId(userId));
     }
 
