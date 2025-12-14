@@ -1,69 +1,63 @@
 package com.example.cinema.managing.system.controller;
 
-import com.example.cinema.managing.system.model.User;
-import com.example.cinema.managing.system.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Map;
+import com.example.cinema.managing.system.dto.MessageResponse;
+import com.example.cinema.managing.system.dto.UpdateUserRequest;
+import com.example.cinema.managing.system.dto.UserProfileResponse;
+import com.example.cinema.managing.system.service.UserService;
 
 @RestController
 @RequestMapping("/api/users")
-@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
+@CrossOrigin(origins = "http://localhost:3000")
 public class UserController {
 
     @Autowired
     private UserService userService;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @PutMapping("/{id}")
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public ResponseEntity<?> updateUser(@PathVariable String id, @RequestBody Map<String, String> updates) {
+    @GetMapping("/profile")
+    public ResponseEntity<?> getProfile() {
         try {
-            User user = userService.getUserById(id);
-            
-            if (user == null) {
-                return ResponseEntity.notFound().build();
-            }
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String userEmail = authentication.getName();
 
-            // Update basic information
-            if (updates.containsKey("username")) {
-                user.setUsername(updates.get("username"));
-            }
-            if (updates.containsKey("email")) {
-                user.setEmail(updates.get("email"));
-            }
-            if (updates.containsKey("phone")) {
-                user.setPhone(updates.get("phone"));
-            }
-
-            // Handle password change
-            if (updates.containsKey("newPassword") && updates.containsKey("currentPassword")) {
-                String currentPassword = updates.get("currentPassword");
-                String newPassword = updates.get("newPassword");
-
-                // Verify current password
-                if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
-                    return ResponseEntity.badRequest().body("Current password is incorrect");
-                }
-
-                // Update to new password
-                user.setPassword(passwordEncoder.encode(newPassword));
-            }
-
-            User updatedUser = userService.updateUser(user);
-            
-            // Remove password from response
-            updatedUser.setPassword(null);
-            
-            return ResponseEntity.ok(updatedUser);
+            UserProfileResponse profile = userService.getUserProfileByEmail(userEmail);
+            return ResponseEntity.ok(profile);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
+        }
+    }
+
+    @GetMapping("/{userId}")
+    public ResponseEntity<?> getUserById(@PathVariable String userId) {
+        try {
+            UserProfileResponse profile = userService.getUserProfile(userId);
+            return ResponseEntity.ok(profile);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
+        }
+    }
+
+    @PutMapping("/profile")
+    public ResponseEntity<?> updateProfile(@RequestBody UpdateUserRequest request) {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String userEmail = authentication.getName();
+
+            UserProfileResponse updatedProfile = userService.updateUserProfileByEmail(userEmail, request);
+            return ResponseEntity.ok(updatedProfile);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
         }
     }
 }
