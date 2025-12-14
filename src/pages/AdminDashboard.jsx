@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import movieService from '../services/movieService';
 import merchandiseService from '../services/merchandiseService';
 import foodService from '../services/foodService';
+import systemConfigService from '../services/systemConfigService';
 import ShowtimeManagement from '../components/ShowtimeManagement';
 import './AdminDashboard.css';
 
@@ -15,6 +16,8 @@ function AdminDashboard() {
   const [movies, setMovies] = useState([]);
   const [merchandise, setMerchandise] = useState([]);
   const [foods, setFoods] = useState([]);
+  const [foodCategories, setFoodCategories] = useState(['POPCORN', 'DRINKS', 'SNACKS', 'COMBOS']);
+  const [merchandiseCategories, setMerchandiseCategories] = useState(['POSTERS', 'TOYS', 'CLOTHING']);
   
   // Movie Form State
   const [showAddMovie, setShowAddMovie] = useState(false);
@@ -51,7 +54,7 @@ function AdminDashboard() {
     name: '',
     description: '',
     price: '',
-    category: 'POPCORN',
+    category: '',
     imageUrl: '',
     size: 'MEDIUM',
     combo: false,
@@ -63,7 +66,26 @@ function AdminDashboard() {
     loadMovies();
     loadMerchandise();
     loadFoods();
+    loadSystemConfigs();
   }, []);
+
+  const loadSystemConfigs = async () => {
+    try {
+      const foodCats = await systemConfigService.getConfigValue('FOOD_CATEGORIES');
+      const merchCats = await systemConfigService.getConfigValue('MERCHANDISE_CATEGORIES');
+      
+      if (foodCats) {
+        setFoodCategories(foodCats);
+        setNewFood(prev => ({ ...prev, category: foodCats[0] || 'POPCORN' }));
+      }
+      if (merchCats) {
+        setMerchandiseCategories(merchCats);
+        setNewMerchandise(prev => ({ ...prev, category: merchCats[0] || 'POSTERS' }));
+      }
+    } catch (error) {
+      console.error('Error loading system configs:', error);
+    }
+  };
 
   const loadMovies = async () => {
     try {
@@ -649,10 +671,9 @@ function AdminDashboard() {
                       onChange={handleMerchandiseInputChange}
                       required
                     >
-                      <option value="POSTERS">Posters</option>
-                      <option value="T-SHIRTS">T-Shirts</option>
-                      <option value="MUGS">Mugs</option>
-                      <option value="COLLECTIBLES">Collectibles</option>
+                      {merchandiseCategories.map(cat => (
+                        <option key={cat} value={cat}>{cat}</option>
+                      ))}
                     </select>
                     <input
                       type="number"
@@ -790,10 +811,9 @@ function AdminDashboard() {
                       onChange={handleFoodInputChange}
                       required
                     >
-                      <option value="POPCORN">Popcorn</option>
-                      <option value="DRINKS">Drinks</option>
-                      <option value="SNACKS">Snacks</option>
-                      <option value="COMBOS">Combos</option>
+                      {foodCategories.map(cat => (
+                        <option key={cat} value={cat}>{cat}</option>
+                      ))}
                     </select>
                     <select
                       name="size"

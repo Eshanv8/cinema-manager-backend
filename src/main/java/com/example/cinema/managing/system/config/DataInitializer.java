@@ -7,14 +7,18 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import com.example.cinema.managing.system.model.Movie;
 import com.example.cinema.managing.system.model.Seat;
 import com.example.cinema.managing.system.model.Showtime;
+import com.example.cinema.managing.system.model.User;
 import com.example.cinema.managing.system.repository.MovieRepository;
 import com.example.cinema.managing.system.repository.SeatRepository;
 import com.example.cinema.managing.system.repository.ShowtimeRepository;
+import com.example.cinema.managing.system.repository.UserRepository;
+import com.example.cinema.managing.system.service.SystemConfigService;
 
 @Component
 public class DataInitializer implements CommandLineRunner {
@@ -28,9 +32,37 @@ public class DataInitializer implements CommandLineRunner {
     @Autowired
     private SeatRepository seatRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private SystemConfigService systemConfigService;
+
     @Override
     public void run(String... args) throws Exception {
         try {
+            // Initialize system configurations
+            System.out.println("Initializing system configurations...");
+            systemConfigService.initializeDefaultConfigs();
+            System.out.println("System configurations initialized!");
+
+            // Create default admin user if not exists
+            if (!userRepository.findByEmail("admin@cinema.com").isPresent()) {
+                System.out.println("Creating default admin user...");
+                User admin = new User();
+                admin.setUsername("admin");
+                admin.setEmail("admin@cinema.com");
+                admin.setPassword(passwordEncoder.encode("admin123"));
+                admin.setPhone("1234567890");
+                admin.setRole("ADMIN");
+                admin.setLoyaltyPoints(0);
+                userRepository.save(admin);
+                System.out.println("Default admin user created! Email: admin@cinema.com, Password: admin123");
+            }
+
             // Check if movies already exist
             if (movieRepository.count() == 0) {
                 System.out.println("Initializing sample movie data...");

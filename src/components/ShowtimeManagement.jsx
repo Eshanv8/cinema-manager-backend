@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import movieService from '../services/movieService';
 import showtimeService from '../services/showtimeService';
+import systemConfigService from '../services/systemConfigService';
 import './ShowtimeManagement.css';
 
 const ShowtimeManagement = () => {
@@ -8,18 +9,21 @@ const ShowtimeManagement = () => {
   const [selectedMovie, setSelectedMovie] = useState(null);
   const [showtimes, setShowtimes] = useState([]);
   const [showAddForm, setShowAddForm] = useState(false);
+  const [formats, setFormats] = useState(['2D', '3D', 'IMAX']);
+  const [screens, setScreens] = useState(['1', '2', '3']);
   const [formData, setFormData] = useState({
     date: '',
     time: '',
-    screenNumber: '1',
+    screenNumber: '',
     price: 1500,
-    format: '2D',
+    format: '',
     availableSeats: 100,
     totalSeats: 100
   });
 
   useEffect(() => {
     loadMovies();
+    loadSystemConfigs();
   }, []);
 
   useEffect(() => {
@@ -27,6 +31,29 @@ const ShowtimeManagement = () => {
       loadShowtimes(selectedMovie.id);
     }
   }, [selectedMovie]);
+
+  const loadSystemConfigs = async () => {
+    try {
+      const ticketFormats = await systemConfigService.getConfigValue('TICKET_FORMATS');
+      const screenNumbers = await systemConfigService.getConfigValue('SCREEN_NUMBERS');
+      const defaultPrice = await systemConfigService.getConfigValue('DEFAULT_TICKET_PRICE');
+      const defaultSeats = await systemConfigService.getConfigValue('DEFAULT_SEAT_COUNT');
+
+      if (ticketFormats) setFormats(ticketFormats);
+      if (screenNumbers) setScreens(screenNumbers);
+      
+      setFormData(prev => ({
+        ...prev,
+        price: defaultPrice || 1500,
+        totalSeats: defaultSeats || 100,
+        availableSeats: defaultSeats || 100,
+        screenNumber: screenNumbers?.[0] || '1',
+        format: ticketFormats?.[0] || '2D'
+      }));
+    } catch (error) {
+      console.error('Error loading system configs:', error);
+    }
+  };
 
   const loadMovies = async () => {
     try {
@@ -224,12 +251,9 @@ const ShowtimeManagement = () => {
                         onChange={handleInputChange}
                         required
                       >
-                        <option value="1">Screen 1</option>
-                        <option value="2">Screen 2</option>
-                        <option value="3">Screen 3</option>
-                        <option value="VIP Hall">VIP Hall</option>
-                        <option value="IMAX Hall">IMAX Hall</option>
-                        <option value="4DX Hall">4DX Hall</option>
+                        {screens.map(screen => (
+                          <option key={screen} value={screen}>{screen}</option>
+                        ))}
                       </select>
                     </div>
 
@@ -241,10 +265,9 @@ const ShowtimeManagement = () => {
                         onChange={handleInputChange}
                         required
                       >
-                        <option value="2D">2D</option>
-                        <option value="3D">3D</option>
-                        <option value="IMAX">IMAX</option>
-                        <option value="4DX">4DX</option>
+                        {formats.map(format => (
+                          <option key={format} value={format}>{format}</option>
+                        ))}
                       </select>
                     </div>
 

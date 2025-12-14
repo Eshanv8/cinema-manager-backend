@@ -23,11 +23,11 @@ public class Showtime {
     
     private Double price;
     
-    private Integer totalSeats = 100;
+    private Integer totalSeats;
     
-    private Integer availableSeats = 100;
+    private Integer availableSeats;
     
-    private String format; // 2D, 3D, IMAX
+    private String format; // 2D, 3D, IMAX, etc. - values from SystemConfig
     
     private boolean active = true;
     
