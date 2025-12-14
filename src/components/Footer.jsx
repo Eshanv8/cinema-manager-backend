@@ -11,6 +11,8 @@ function Footer() {
   const [expandedTerm, setExpandedTerm] = useState(null);
   const [showPrivacy, setShowPrivacy] = useState(false);
   const [expandedPrivacy, setExpandedPrivacy] = useState(null);
+  const [showCancellation, setShowCancellation] = useState(false);
+  const [expandedCancellation, setExpandedCancellation] = useState(null);
 
   const handleSubscribe = (e) => {
     e.preventDefault();
@@ -31,6 +33,10 @@ function Footer() {
 
   const togglePrivacy = (index) => {
     setExpandedPrivacy(expandedPrivacy === index ? null : index);
+  };
+
+  const toggleCancellation = (index) => {
+    setExpandedCancellation(expandedCancellation === index ? null : index);
   };
 
   const faqs = [
@@ -227,7 +233,7 @@ function Footer() {
               <li><a href="#contact">Contact Us</a></li>
               <li><a href="#terms" onClick={(e) => { e.preventDefault(); setShowTerms(true); }}>Terms of Service</a></li>
               <li><a href="#privacy" onClick={(e) => { e.preventDefault(); setShowPrivacy(true); }}>Privacy Policy</a></li>
-              <li><a href="#cancellation">Cancellation Policy</a></li>
+              <li><a href="#cancellation" onClick={(e) => { e.preventDefault(); setShowCancellation(true); }}>Cancellation Policy</a></li>
             </ul>
           </div>
 
@@ -1134,6 +1140,396 @@ function Footer() {
                   <div>
                     <h4>Your Consent</h4>
                     <p>By using Cinematic's services, you acknowledge that you have read and understood this Privacy Policy and consent to the collection, use, and disclosure of your personal information as described herein.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Cancellation Policy Modal */}
+      {showCancellation && (
+        <div className="cancellation-modal-overlay" onClick={() => setShowCancellation(false)}>
+          <div className="cancellation-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="cancellation-modal-header">
+              <div className="cancellation-header-content">
+                <div className="cancellation-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <circle cx="12" cy="12" r="10" strokeWidth="2"/>
+                    <path d="M12 6v6l4 2" strokeWidth="2" strokeLinecap="round"/>
+                  </svg>
+                </div>
+                <div>
+                  <h2>Cancellation & Refund Policy</h2>
+                  <p>Last Updated: December 14, 2025</p>
+                </div>
+              </div>
+              <button className="cancellation-close-btn" onClick={() => setShowCancellation(false)}>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <line x1="18" y1="6" x2="6" y2="18" strokeWidth="2" strokeLinecap="round"/>
+                  <line x1="6" y1="6" x2="18" y2="18" strokeWidth="2" strokeLinecap="round"/>
+                </svg>
+              </button>
+            </div>
+
+            <div className="cancellation-modal-body">
+              {/* Introduction */}
+              <div className="cancellation-section">
+                <div className="cancellation-intro">
+                  <p>
+                    At <strong>Cinematic</strong>, we understand that plans can change. This Cancellation and Refund Policy outlines 
+                    the terms and conditions under which you can cancel your booking and request a refund. Please read this policy 
+                    carefully before making a purchase, as all bookings are subject to these terms.
+                  </p>
+                </div>
+              </div>
+
+              {/* Cancellation Sections */}
+              <div className="cancellation-section">
+                <button
+                  className={`cancellation-section-header ${expandedCancellation === 0 ? 'active' : ''}`}
+                  onClick={() => toggleCancellation(0)}
+                >
+                  <div className="cancellation-section-title">
+                    <span className="cancellation-number">1</span>
+                    <h3>Ticket Cancellation Policy</h3>
+                  </div>
+                  <svg className={`cancellation-toggle-icon ${expandedCancellation === 0 ? 'rotated' : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <polyline points="6 9 12 15 18 9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </button>
+                <div className={`cancellation-section-content ${expandedCancellation === 0 ? 'expanded' : ''}`}>
+                  <h4 className="cancellation-subsection">Standard Tickets</h4>
+                  <ul className="cancellation-list">
+                    <li><strong>More than 4 hours before showtime:</strong> Full refund (100% of ticket price minus processing fee)</li>
+                    <li><strong>2-4 hours before showtime:</strong> 75% refund of ticket price</li>
+                    <li><strong>1-2 hours before showtime:</strong> 50% refund of ticket price</li>
+                    <li><strong>Less than 1 hour before showtime:</strong> No refund available</li>
+                    <li><strong>After showtime has started:</strong> No refund available under any circumstances</li>
+                  </ul>
+                  <h4 className="cancellation-subsection">Premium & Special Screenings</h4>
+                  <ul className="cancellation-list">
+                    <li><strong>IMAX, 3D, 4DX screenings:</strong> Cancellation allowed up to 6 hours before showtime (80% refund)</li>
+                    <li><strong>Special events & premieres:</strong> Cancellation allowed up to 24 hours before showtime (75% refund)</li>
+                    <li><strong>Private screenings:</strong> Cancellation allowed up to 48 hours before showtime (70% refund)</li>
+                    <li><strong>Film festivals & marathons:</strong> Non-refundable once purchased</li>
+                  </ul>
+                  <h4 className="cancellation-subsection">Processing Fees</h4>
+                  <p>A processing fee of $1.50 per ticket applies to all cancellations, deducted from the refund amount. This fee covers administrative and payment processing costs.</p>
+                </div>
+              </div>
+
+              <div className="cancellation-section">
+                <button
+                  className={`cancellation-section-header ${expandedCancellation === 1 ? 'active' : ''}`}
+                  onClick={() => toggleCancellation(1)}
+                >
+                  <div className="cancellation-section-title">
+                    <span className="cancellation-number">2</span>
+                    <h3>How to Cancel Your Booking</h3>
+                  </div>
+                  <svg className={`cancellation-toggle-icon ${expandedCancellation === 1 ? 'rotated' : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <polyline points="6 9 12 15 18 9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </button>
+                <div className={`cancellation-section-content ${expandedCancellation === 1 ? 'expanded' : ''}`}>
+                  <h4 className="cancellation-subsection">Online Cancellation (Recommended)</h4>
+                  <ul className="cancellation-list">
+                    <li><strong>Step 1:</strong> Log in to your Cinematic account</li>
+                    <li><strong>Step 2:</strong> Navigate to "My Bookings" section in your profile</li>
+                    <li><strong>Step 3:</strong> Select the booking you wish to cancel</li>
+                    <li><strong>Step 4:</strong> Click "Cancel Booking" button</li>
+                    <li><strong>Step 5:</strong> Confirm cancellation and select refund method</li>
+                    <li><strong>Step 6:</strong> Receive instant confirmation via email</li>
+                  </ul>
+                  <h4 className="cancellation-subsection">Mobile App Cancellation</h4>
+                  <ul className="cancellation-list">
+                    <li>Open the Cinematic mobile app</li>
+                    <li>Go to "My Tickets" tab</li>
+                    <li>Tap on the booking to cancel</li>
+                    <li>Select "Cancel Booking" and confirm</li>
+                    <li>Refund will be processed automatically</li>
+                  </ul>
+                  <h4 className="cancellation-subsection">Customer Support Cancellation</h4>
+                  <ul className="cancellation-list">
+                    <li><strong>Phone:</strong> Call +1 (800) 123-4567 with your booking ID</li>
+                    <li><strong>Email:</strong> Send cancellation request to bookings@cinematic.com</li>
+                    <li><strong>Live Chat:</strong> Use our 24/7 live chat feature on the website</li>
+                    <li><strong>Response Time:</strong> Support cancellations processed within 15 minutes during business hours</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div className="cancellation-section">
+                <button
+                  className={`cancellation-section-header ${expandedCancellation === 2 ? 'active' : ''}`}
+                  onClick={() => toggleCancellation(2)}
+                >
+                  <div className="cancellation-section-title">
+                    <span className="cancellation-number">3</span>
+                    <h3>Refund Processing</h3>
+                  </div>
+                  <svg className={`cancellation-toggle-icon ${expandedCancellation === 2 ? 'rotated' : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <polyline points="6 9 12 15 18 9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </button>
+                <div className={`cancellation-section-content ${expandedCancellation === 2 ? 'expanded' : ''}`}>
+                  <h4 className="cancellation-subsection">Refund Timeline</h4>
+                  <ul className="cancellation-list">
+                    <li><strong>Credit/Debit Card:</strong> 5-7 business days from cancellation date</li>
+                    <li><strong>Digital Wallets (PayPal, Apple Pay, Google Pay):</strong> 2-3 business days</li>
+                    <li><strong>Net Banking:</strong> 3-5 business days</li>
+                    <li><strong>Cinematic Wallet:</strong> Instant credit to your wallet balance</li>
+                    <li><strong>Gift Cards:</strong> Refunded as Cinematic credit (non-transferable)</li>
+                  </ul>
+                  <h4 className="cancellation-subsection">Refund Methods</h4>
+                  <ul className="cancellation-list">
+                    <li><strong>Original Payment Method:</strong> Default refund option, credited to the same card/account used for booking</li>
+                    <li><strong>Cinematic Wallet:</strong> Instant credit that can be used for future bookings (includes 5% bonus)</li>
+                    <li><strong>Bank Transfer:</strong> Available for refunds over $50 (requires bank details verification)</li>
+                  </ul>
+                  <p className="cancellation-note"><strong>Note:</strong> Refund processing times may vary during peak seasons and holidays. You'll receive email notifications at each stage of the refund process.</p>
+                </div>
+              </div>
+
+              <div className="cancellation-section">
+                <button
+                  className={`cancellation-section-header ${expandedCancellation === 3 ? 'active' : ''}`}
+                  onClick={() => toggleCancellation(3)}
+                >
+                  <div className="cancellation-section-title">
+                    <span className="cancellation-number">4</span>
+                    <h3>Food & Beverage Cancellations</h3>
+                  </div>
+                  <svg className={`cancellation-toggle-icon ${expandedCancellation === 3 ? 'rotated' : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <polyline points="6 9 12 15 18 9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </button>
+                <div className={`cancellation-section-content ${expandedCancellation === 3 ? 'expanded' : ''}`}>
+                  <p>Food and beverage orders placed along with ticket bookings follow specific cancellation rules:</p>
+                  <ul className="cancellation-list">
+                    <li><strong>More than 2 hours before showtime:</strong> Full refund of food order (100%)</li>
+                    <li><strong>1-2 hours before showtime:</strong> 75% refund of food order</li>
+                    <li><strong>Less than 1 hour before showtime:</strong> No refund on food orders</li>
+                    <li><strong>Combo deals:</strong> Refunded proportionally based on ticket cancellation eligibility</li>
+                    <li><strong>Pre-prepared items:</strong> Non-refundable within 30 minutes of showtime</li>
+                    <li><strong>Partially consumed orders:</strong> Not eligible for refund</li>
+                  </ul>
+                  <p className="cancellation-note"><strong>Important:</strong> Food orders are automatically cancelled when you cancel your ticket booking. You cannot cancel food orders independently without cancelling tickets.</p>
+                </div>
+              </div>
+
+              <div className="cancellation-section">
+                <button
+                  className={`cancellation-section-header ${expandedCancellation === 4 ? 'active' : ''}`}
+                  onClick={() => toggleCancellation(4)}
+                >
+                  <div className="cancellation-section-title">
+                    <span className="cancellation-number">5</span>
+                    <h3>Show Cancellation by Cinema</h3>
+                  </div>
+                  <svg className={`cancellation-toggle-icon ${expandedCancellation === 4 ? 'rotated' : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <polyline points="6 9 12 15 18 9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </button>
+                <div className={`cancellation-section-content ${expandedCancellation === 4 ? 'expanded' : ''}`}>
+                  <p>If we cancel a show due to technical issues, emergencies, or other unforeseen circumstances:</p>
+                  <ul className="cancellation-list">
+                    <li><strong>Full Refund:</strong> 100% refund including all booking and processing fees</li>
+                    <li><strong>Compensation:</strong> Additional $5 Cinematic credit per ticket as a goodwill gesture</li>
+                    <li><strong>Alternative Screening:</strong> Priority booking for the next available showtime of the same movie</li>
+                    <li><strong>Free Upgrade:</strong> Option to upgrade to premium seating for rescheduled show (subject to availability)</li>
+                    <li><strong>Notification:</strong> Instant SMS and email alerts with refund instructions</li>
+                    <li><strong>Processing Time:</strong> Automatic refund initiated within 24 hours</li>
+                  </ul>
+                  <p className="cancellation-warning"><strong>Weather-Related Closures:</strong> In case of extreme weather conditions or natural disasters, full refunds are processed automatically. No action required from customers.</p>
+                </div>
+              </div>
+
+              <div className="cancellation-section">
+                <button
+                  className={`cancellation-section-header ${expandedCancellation === 5 ? 'active' : ''}`}
+                  onClick={() => toggleCancellation(5)}
+                >
+                  <div className="cancellation-section-title">
+                    <span className="cancellation-number">6</span>
+                    <h3>Partial Cancellations</h3>
+                  </div>
+                  <svg className={`cancellation-toggle-icon ${expandedCancellation === 5 ? 'rotated' : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <polyline points="6 9 12 15 18 9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </button>
+                <div className={`cancellation-section-content ${expandedCancellation === 5 ? 'expanded' : ''}`}>
+                  <p>For group bookings, you can cancel individual tickets while keeping others active:</p>
+                  <ul className="cancellation-list">
+                    <li><strong>Minimum Tickets:</strong> At least one ticket must remain active in the booking</li>
+                    <li><strong>Same Time Limits:</strong> Partial cancellations follow the same time-based refund rules</li>
+                    <li><strong>Seat Selection:</strong> Remaining seats will be preserved; canceled seats become available for rebooking</li>
+                    <li><strong>Group Discounts:</strong> If cancellation drops below group size threshold, pricing may be adjusted</li>
+                    <li><strong>Processing Fee:</strong> Applied per ticket cancelled, not per transaction</li>
+                    <li><strong>Food Orders:</strong> Proportionally reduced based on cancelled tickets</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div className="cancellation-section">
+                <button
+                  className={`cancellation-section-header ${expandedCancellation === 6 ? 'active' : ''}`}
+                  onClick={() => toggleCancellation(6)}
+                >
+                  <div className="cancellation-section-title">
+                    <span className="cancellation-number">7</span>
+                    <h3>Loyalty Program & Cancellations</h3>
+                  </div>
+                  <svg className={`cancellation-toggle-icon ${expandedCancellation === 6 ? 'rotated' : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <polyline points="6 9 12 15 18 9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </button>
+                <div className={`cancellation-section-content ${expandedCancellation === 6 ? 'expanded' : ''}`}>
+                  <h4 className="cancellation-subsection">Points & Rewards</h4>
+                  <ul className="cancellation-list">
+                    <li><strong>Points Earned:</strong> Loyalty points earned from cancelled bookings are automatically deducted</li>
+                    <li><strong>Points Redeemed:</strong> Points used for booking are credited back to your account upon cancellation</li>
+                    <li><strong>Tier Status:</strong> Cancelled bookings don't count toward tier progression</li>
+                    <li><strong>Free Tickets:</strong> Complimentary tickets from rewards can be cancelled but points are not refunded</li>
+                    <li><strong>Bonus Points:</strong> Promotional bonus points from cancelled bookings may be reversed</li>
+                  </ul>
+                  <h4 className="cancellation-subsection">Membership Benefits</h4>
+                  <ul className="cancellation-list">
+                    <li><strong>Gold/Platinum Members:</strong> Reduced processing fee ($1.00 instead of $1.50)</li>
+                    <li><strong>Premium Members:</strong> Extended cancellation window (additional 1 hour grace period)</li>
+                    <li><strong>No-Show Protection:</strong> Elite members get one free no-show per year without penalty</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div className="cancellation-section">
+                <button
+                  className={`cancellation-section-header ${expandedCancellation === 7 ? 'active' : ''}`}
+                  onClick={() => toggleCancellation(7)}
+                >
+                  <div className="cancellation-section-title">
+                    <span className="cancellation-number">8</span>
+                    <h3>Non-Refundable Situations</h3>
+                  </div>
+                  <svg className={`cancellation-toggle-icon ${expandedCancellation === 7 ? 'rotated' : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <polyline points="6 9 12 15 18 9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </button>
+                <div className={`cancellation-section-content ${expandedCancellation === 7 ? 'expanded' : ''}`}>
+                  <p>The following situations are not eligible for refunds under any circumstances:</p>
+                  <ul className="cancellation-list">
+                    <li><strong>Late Arrival:</strong> Missing the showtime due to late arrival</li>
+                    <li><strong>Wrong Show:</strong> Attending the wrong show or screen by mistake</li>
+                    <li><strong>Personal Reasons:</strong> Dissatisfaction with movie content, quality, or experience</li>
+                    <li><strong>Technical Issues on Customer's End:</strong> Problems with customer's devices, internet, or app</li>
+                    <li><strong>Third-Party Bookings:</strong> Tickets purchased through unauthorized resellers</li>
+                    <li><strong>Expired Tickets:</strong> Attempting to use tickets after showtime has passed</li>
+                    <li><strong>Fraudulent Bookings:</strong> Transactions flagged for suspicious activity</li>
+                    <li><strong>Post-Movie Cancellation:</strong> Cancellation requests after the movie has ended</li>
+                  </ul>
+                  <p className="cancellation-warning"><strong>Important:</strong> Refund policies cannot be overridden by customer service representatives. All cancellations are subject to the terms outlined in this policy.</p>
+                </div>
+              </div>
+
+              <div className="cancellation-section">
+                <button
+                  className={`cancellation-section-header ${expandedCancellation === 8 ? 'active' : ''}`}
+                  onClick={() => toggleCancellation(8)}
+                >
+                  <div className="cancellation-section-title">
+                    <span className="cancellation-number">9</span>
+                    <h3>Modified Bookings</h3>
+                  </div>
+                  <svg className={`cancellation-toggle-icon ${expandedCancellation === 8 ? 'rotated' : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <polyline points="6 9 12 15 18 9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </button>
+                <div className={`cancellation-section-content ${expandedCancellation === 8 ? 'expanded' : ''}`}>
+                  <p>Instead of cancelling, consider modifying your booking to a different showtime or date:</p>
+                  <ul className="cancellation-list">
+                    <li><strong>Free Modifications:</strong> Change showtime once for free up to 3 hours before the original show</li>
+                    <li><strong>Same Movie Only:</strong> Modifications must be for the same movie title</li>
+                    <li><strong>Price Difference:</strong> Pay or receive refund for any ticket price difference</li>
+                    <li><strong>Seat Selection:</strong> Choose from available seats in the new showtime</li>
+                    <li><strong>Modification Fee:</strong> $2.00 per ticket for second and subsequent modifications</li>
+                    <li><strong>Time Limit:</strong> Modifications allowed up to 7 days from original showtime</li>
+                  </ul>
+                  <p>To modify your booking, go to "My Bookings" and select "Change Showtime" option.</p>
+                </div>
+              </div>
+
+              <div className="cancellation-section">
+                <button
+                  className={`cancellation-section-header ${expandedCancellation === 9 ? 'active' : ''}`}
+                  onClick={() => toggleCancellation(9)}
+                >
+                  <div className="cancellation-section-title">
+                    <span className="cancellation-number">10</span>
+                    <h3>Dispute Resolution</h3>
+                  </div>
+                  <svg className={`cancellation-toggle-icon ${expandedCancellation === 9 ? 'rotated' : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <polyline points="6 9 12 15 18 9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </button>
+                <div className={`cancellation-section-content ${expandedCancellation === 9 ? 'expanded' : ''}`}>
+                  <p>If you disagree with a cancellation or refund decision:</p>
+                  <ul className="cancellation-list">
+                    <li><strong>Step 1:</strong> Contact Customer Support at support@cinematic.com with your booking ID and reason for dispute</li>
+                    <li><strong>Step 2:</strong> Provide supporting documentation (screenshots, emails, etc.)</li>
+                    <li><strong>Step 3:</strong> Wait for review by our specialized team (48-72 hours)</li>
+                    <li><strong>Step 4:</strong> Receive decision via email with detailed explanation</li>
+                    <li><strong>Step 5:</strong> If unresolved, escalate to Senior Management (escalations@cinematic.com)</li>
+                    <li><strong>Final Appeal:</strong> Submit formal complaint through our online dispute portal</li>
+                  </ul>
+                  <p className="cancellation-note"><strong>Resolution Time:</strong> Most disputes are resolved within 5-7 business days. Complex cases may take up to 14 business days.</p>
+                </div>
+              </div>
+
+              <div className="cancellation-section">
+                <button
+                  className={`cancellation-section-header ${expandedCancellation === 10 ? 'active' : ''}`}
+                  onClick={() => toggleCancellation(10)}
+                >
+                  <div className="cancellation-section-title">
+                    <span className="cancellation-number">11</span>
+                    <h3>Contact Cancellation Support</h3>
+                  </div>
+                  <svg className={`cancellation-toggle-icon ${expandedCancellation === 10 ? 'rotated' : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <polyline points="6 9 12 15 18 9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </button>
+                <div className={`cancellation-section-content ${expandedCancellation === 10 ? 'expanded' : ''}`}>
+                  <p>Need help with cancellations or refunds? Reach out to our dedicated support team:</p>
+                  <div className="cancellation-contact-info">
+                    <p><strong>24/7 Support Hotline:</strong> +1 (800) 123-4567</p>
+                    <p><strong>Email Support:</strong> bookings@cinematic.com</p>
+                    <p><strong>Live Chat:</strong> Available on website and mobile app</p>
+                    <p><strong>WhatsApp:</strong> +1 (800) 123-4568</p>
+                    <p><strong>Support Hours:</strong> 24/7 for urgent cancellations, 9 AM - 9 PM for general inquiries</p>
+                    <p><strong>Average Response Time:</strong> Phone (immediate), Email (2-4 hours), Chat (5-10 minutes)</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Important Notice */}
+              <div className="cancellation-notice">
+                <div className="notice-box">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <circle cx="12" cy="12" r="10" strokeWidth="2"/>
+                    <path d="M12 16v-4" strokeWidth="2" strokeLinecap="round"/>
+                    <circle cx="12" cy="8" r="0.5" fill="currentColor"/>
+                  </svg>
+                  <div>
+                    <h4>Important Reminders</h4>
+                    <ul>
+                      <li>Always check cancellation deadlines before making bookings</li>
+                      <li>Save your booking confirmation and cancellation receipts</li>
+                      <li>Refunds are subject to payment method availability and bank processing times</li>
+                      <li>This policy is subject to change; check for updates before each booking</li>
+                      <li>Special promotions may have different cancellation terms</li>
+                    </ul>
                   </div>
                 </div>
               </div>
