@@ -209,7 +209,7 @@ function HomePage() {
       </section>
 
       {/* Newsletter Section */}
-      <section className="newsletter-section">
+      {/* <section className="newsletter-section">
         <div className="newsletter-content">
           <h3>SUBSCRIBE FOR NEWSLETTER</h3>
           <p>Get the latest movie updates and exclusive deals</p>
@@ -218,7 +218,7 @@ function HomePage() {
             <button className="subscribe-btn">SUBSCRIBE</button>
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Trailer Modal */}
       {selectedTrailer && (

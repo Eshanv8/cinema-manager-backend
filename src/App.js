@@ -8,10 +8,12 @@ import MoviesPage from './pages/MoviesPage';
 import MovieDetailsPage from './pages/MovieDetailsPage';
 import BookingPage from './pages/BookingPage';
 import SeatSelection from './pages/SeatSelection';
+import Food from './components/Food';
 import AdminDashboard from './pages/AdminDashboard';
 import ProfilePage from './pages/ProfilePage';
 import TrailerPlayer from './components/TrailerPlayer';
 import Navbar from './components/Navbar';
+import Footer from './components/Footer';
 
 // Protected Route Component
 const ProtectedRoute = ({ children, adminOnly = false }) => {
@@ -92,6 +94,14 @@ function AppContent() {
           }
         />
         <Route
+          path="/food"
+          element={
+            <ProtectedRoute>
+              <Food />
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="/profile"
           element={
             <ProtectedRoute>
@@ -108,6 +118,7 @@ function AppContent() {
           }
         />
       </Routes>
+      {user && <Footer />}
     </div>
   );
 }

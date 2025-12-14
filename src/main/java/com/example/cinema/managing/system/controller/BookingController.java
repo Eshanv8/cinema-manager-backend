@@ -1,13 +1,22 @@
 package com.example.cinema.managing.system.controller;
 
-import com.example.cinema.managing.system.model.Booking;
-import com.example.cinema.managing.system.service.BookingService;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import com.example.cinema.managing.system.dto.BookingResponse;
+import com.example.cinema.managing.system.model.Booking;
+import com.example.cinema.managing.system.service.BookingService;
 
 @RestController
 @RequestMapping("/api/bookings")
@@ -25,7 +34,7 @@ public class BookingController {
 
     @GetMapping("/user/{userId}")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public ResponseEntity<List<Booking>> getUserBookings(@PathVariable String userId) {
+    public ResponseEntity<List<BookingResponse>> getUserBookings(@PathVariable String userId) {
         return ResponseEntity.ok(bookingService.getBookingsByUserId(userId));
     }
 
