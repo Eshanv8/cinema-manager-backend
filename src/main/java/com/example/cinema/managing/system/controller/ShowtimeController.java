@@ -43,7 +43,7 @@ public class ShowtimeController {
     }
 
     @PostMapping
-    // @PreAuthorize("hasRole('ADMIN')") // Temporarily disabled for bulk import
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Showtime> createShowtime(@RequestBody Showtime showtime) {
         return ResponseEntity.ok(showtimeService.createShowtime(showtime));
     }

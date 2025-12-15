@@ -1,8 +1,11 @@
 package com.example.cinema.managing.system.service;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.example.cinema.managing.system.dto.UpdateUserRequest;
@@ -15,6 +18,9 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     public UserProfileResponse getUserProfile(String userId) {
         User user = userRepository.findById(userId)
@@ -82,5 +88,30 @@ public class UserService {
         response.setCreatedAt(user.getCreatedAt());
         response.setUpdatedAt(user.getUpdatedAt());
         return response;
+    }
+
+    public List<UserProfileResponse> getAllAdmins() {
+        List<User> admins = userRepository.findByRole("ADMIN");
+        return admins.stream()
+            .map(this::mapToProfileResponse)
+            .collect(Collectors.toList());
+    }
+
+    public User createAdminUser(User adminUser) {
+        // Check if email already exists
+        if (userRepository.findByEmail(adminUser.getEmail()).isPresent()) {
+            throw new RuntimeException("Email already exists");
+        }
+
+        // Encode password
+        adminUser.setPassword(passwordEncoder.encode(adminUser.getPassword()));
+        
+        // Set admin role and defaults
+        adminUser.setRole("ADMIN");
+        adminUser.setLoyaltyPoints(0);
+        adminUser.setCreatedAt(LocalDateTime.now());
+        adminUser.setUpdatedAt(LocalDateTime.now());
+
+        return userRepository.save(adminUser);
     }
 }

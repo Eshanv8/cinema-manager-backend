@@ -14,7 +14,17 @@ const userService = {
   getUserById: async (userId) => {
     const response = await API.get(`/users/${userId}`);
     return response.data;
-  }
+  },
+
+  createAdminUser: async (adminData) => {
+    const response = await API.post('/users/admin', adminData);
+    return response.data;
+  },
+
+  getAllAdmins: async () => {
+    const response = await API.get('/users/admins');
+    return response.data;
+  },
 };
 
 export default userService;

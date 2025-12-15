@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import movieService from '../services/movieService';
 import showtimeService from '../services/showtimeService';
+import systemConfigService from '../services/systemConfigService';
 import './ShowtimeManagement.css';
 
 const ShowtimeManagement = () => {
@@ -8,29 +9,21 @@ const ShowtimeManagement = () => {
   const [selectedMovie, setSelectedMovie] = useState(null);
   const [showtimes, setShowtimes] = useState([]);
   const [showAddForm, setShowAddForm] = useState(false);
+  const [formats, setFormats] = useState(['2D', '3D', 'IMAX']);
+  const [screens, setScreens] = useState(['1', '2', '3']);
   const [formData, setFormData] = useState({
     date: '',
     time: '',
-    screenNumber: '1',
+    screenNumber: '',
     price: 1500,
-    format: '2D',
+    format: '',
     availableSeats: 100,
     totalSeats: 100
   });
 
-  // Common time slots for quick selection
-  const commonTimeSlots = [
-    '10:00', '10:30', '11:00', '11:30',
-    '12:00', '12:30', '13:00', '13:30',
-    '14:00', '14:30', '15:00', '15:30',
-    '16:00', '16:30', '17:00', '17:30',
-    '18:00', '18:30', '19:00', '19:30',
-    '20:00', '20:30', '21:00', '21:30',
-    '22:00', '22:30', '23:00'
-  ];
-
   useEffect(() => {
     loadMovies();
+    loadSystemConfigs();
   }, []);
 
   useEffect(() => {
@@ -38,6 +31,29 @@ const ShowtimeManagement = () => {
       loadShowtimes(selectedMovie.id);
     }
   }, [selectedMovie]);
+
+  const loadSystemConfigs = async () => {
+    try {
+      const ticketFormats = await systemConfigService.getConfigValue('TICKET_FORMATS');
+      const screenNumbers = await systemConfigService.getConfigValue('SCREEN_NUMBERS');
+      const defaultPrice = await systemConfigService.getConfigValue('DEFAULT_TICKET_PRICE');
+      const defaultSeats = await systemConfigService.getConfigValue('DEFAULT_SEAT_COUNT');
+
+      if (ticketFormats) setFormats(ticketFormats);
+      if (screenNumbers) setScreens(screenNumbers);
+      
+      setFormData(prev => ({
+        ...prev,
+        price: defaultPrice || 1500,
+        totalSeats: defaultSeats || 100,
+        availableSeats: defaultSeats || 100,
+        screenNumber: screenNumbers?.[0] || '1',
+        format: ticketFormats?.[0] || '2D'
+      }));
+    } catch (error) {
+      console.error('Error loading system configs:', error);
+    }
+  };
 
   const loadMovies = async () => {
     try {
@@ -204,8 +220,8 @@ const ShowtimeManagement = () => {
                 <h4>Add New Showtime</h4>
                 <form onSubmit={handleSubmit}>
                   <div className="form-grid">
-                    <div className="form-group full-width">
-                      <label>📅 Date</label>
+                    <div className="form-group">
+                      <label>Date</label>
                       <input
                         type="date"
                         name="date"
@@ -214,95 +230,68 @@ const ShowtimeManagement = () => {
                         min={new Date().toISOString().split('T')[0]}
                         required
                       />
-                      <small>Select the screening date (today or future dates)</small>
-                    </div>
-
-                    <div className="form-group full-width">
-                      <label>🕐 Time</label>
-                      <div className="time-input-group">
-                        <input
-                          type="time"
-                          name="time"
-                          value={formData.time}
-                          onChange={handleInputChange}
-                          required
-                        />
-                        <span className="or-text">or select:</span>
-                        <div className="quick-time-slots">
-                          {commonTimeSlots.map(timeSlot => (
-                            <button
-                              key={timeSlot}
-                              type="button"
-                              className={`time-slot-btn ${formData.time === timeSlot ? 'active' : ''}`}
-                              onClick={() => setFormData({...formData, time: timeSlot})}
-                            >
-                              {timeSlot}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
                     </div>
 
                     <div className="form-group">
-                      <label>🎭 Screen</label>
+                      <label>Time</label>
+                      <input
+                        type="time"
+                        name="time"
+                        value={formData.time}
+                        onChange={handleInputChange}
+                        required
+                      />
+                    </div>
+
+                    <div className="form-group">
+                      <label>Screen</label>
                       <select
                         name="screenNumber"
                         value={formData.screenNumber}
                         onChange={handleInputChange}
                         required
                       >
-                        <option value="Screen 1">Screen 1</option>
-                        <option value="Screen 2">Screen 2</option>
-                        <option value="Screen 3">Screen 3</option>
-                        <option value="Screen 4">Screen 4</option>
-                        <option value="Screen 5">Screen 5</option>
-                        <option value="VIP Hall">VIP Hall</option>
-                        <option value="IMAX Hall">IMAX Hall</option>
-                        <option value="4DX Hall">4DX Hall</option>
+                        {screens.map(screen => (
+                          <option key={screen} value={screen}>{screen}</option>
+                        ))}
                       </select>
                     </div>
 
                     <div className="form-group">
-                      <label>🎬 Format</label>
+                      <label>Format</label>
                       <select
                         name="format"
                         value={formData.format}
                         onChange={handleInputChange}
                         required
                       >
-                        <option value="2D">2D</option>
-                        <option value="3D">3D</option>
-                        <option value="IMAX">IMAX</option>
-                        <option value="4DX">4DX</option>
+                        {formats.map(format => (
+                          <option key={format} value={format}>{format}</option>
+                        ))}
                       </select>
                     </div>
 
                     <div className="form-group">
-                      <label>💰 Price (LKR)</label>
+                      <label>Price (LKR)</label>
                       <input
                         type="number"
                         name="price"
-                        step="50"
-                        min="500"
+                        step="1"
                         value={formData.price}
                         onChange={handleInputChange}
                         required
                       />
-                      <small>Suggested: 2D-800, 3D-1200, IMAX-1500</small>
                     </div>
 
                     <div className="form-group">
-                      <label>💺 Total Seats</label>
+                      <label>Total Seats</label>
                       <input
                         type="number"
                         name="totalSeats"
-                        min="1"
-                        max="300"
                         value={formData.totalSeats}
                         onChange={handleInputChange}
                         required
                       />
-                      <small>Available seats will be set to this value</small>
                     </div>
                   </div>
 

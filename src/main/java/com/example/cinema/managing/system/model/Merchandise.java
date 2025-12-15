@@ -21,7 +21,7 @@ public class Merchandise {
     
     private Double price;
     
-    private String category; // TOYS, POSTERS, T-SHIRTS, MUGS, COLLECTIBLES, ACTION_FIGURES, PLUSHIES
+    private String category; // POSTERS, T-SHIRTS, MUGS, COLLECTIBLES
     
     private String imageUrl;
     
@@ -30,10 +30,6 @@ public class Merchandise {
     private boolean bundle = false;
     
     private String bundleMovieId;
-    
-    private String relatedMovie; // Movie title this merchandise is related to
-    
-    private String characterName; // Character name (e.g., "Batman", "Spiderman")
     
     private Integer salesCount = 0;
     

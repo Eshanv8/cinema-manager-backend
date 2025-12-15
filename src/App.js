@@ -12,7 +12,6 @@ import Food from './components/Food';
 import AdminDashboard from './pages/AdminDashboard';
 import ProfilePage from './pages/ProfilePage';
 import TrailerPlayer from './components/TrailerPlayer';
-import MerchandiseShop from './pages/MerchandiseShop';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 
@@ -107,14 +106,6 @@ function AppContent() {
           element={
             <ProtectedRoute>
               <ProfilePage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/merchandise"
-          element={
-            <ProtectedRoute>
-              <MerchandiseShop />
             </ProtectedRoute>
           }
         />
