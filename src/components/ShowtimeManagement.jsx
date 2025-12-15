@@ -21,6 +21,17 @@ const ShowtimeManagement = () => {
     totalSeats: 100
   });
 
+  // Common time slots for quick selection
+  const commonTimeSlots = [
+    '10:00', '10:30', '11:00', '11:30',
+    '12:00', '12:30', '13:00', '13:30',
+    '14:00', '14:30', '15:00', '15:30',
+    '16:00', '16:30', '17:00', '17:30',
+    '18:00', '18:30', '19:00', '19:30',
+    '20:00', '20:30', '21:00', '21:30',
+    '22:00', '22:30', '23:00'
+  ];
+
   useEffect(() => {
     loadMovies();
     loadSystemConfigs();
@@ -220,8 +231,8 @@ const ShowtimeManagement = () => {
                 <h4>Add New Showtime</h4>
                 <form onSubmit={handleSubmit}>
                   <div className="form-grid">
-                    <div className="form-group">
-                      <label>Date</label>
+                    <div className="form-group full-width">
+                      <label>📅 Date</label>
                       <input
                         type="date"
                         name="date"
@@ -230,21 +241,37 @@ const ShowtimeManagement = () => {
                         min={new Date().toISOString().split('T')[0]}
                         required
                       />
+                      <small>Select the screening date (today or future dates)</small>
+                    </div>
+
+                    <div className="form-group full-width">
+                      <label>🕐 Time</label>
+                      <div className="time-input-group">
+                        <input
+                          type="time"
+                          name="time"
+                          value={formData.time}
+                          onChange={handleInputChange}
+                          required
+                        />
+                        <span className="or-text">or select:</span>
+                        <div className="quick-time-slots">
+                          {commonTimeSlots.map(timeSlot => (
+                            <button
+                              key={timeSlot}
+                              type="button"
+                              className={`time-slot-btn ${formData.time === timeSlot ? 'active' : ''}`}
+                              onClick={() => setFormData({...formData, time: timeSlot})}
+                            >
+                              {timeSlot}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
                     </div>
 
                     <div className="form-group">
-                      <label>Time</label>
-                      <input
-                        type="time"
-                        name="time"
-                        value={formData.time}
-                        onChange={handleInputChange}
-                        required
-                      />
-                    </div>
-
-                    <div className="form-group">
-                      <label>Screen</label>
+                      <label>🎭 Screen</label>
                       <select
                         name="screenNumber"
                         value={formData.screenNumber}
@@ -258,7 +285,7 @@ const ShowtimeManagement = () => {
                     </div>
 
                     <div className="form-group">
-                      <label>Format</label>
+                      <label>🎬 Format</label>
                       <select
                         name="format"
                         value={formData.format}
@@ -272,26 +299,31 @@ const ShowtimeManagement = () => {
                     </div>
 
                     <div className="form-group">
-                      <label>Price (LKR)</label>
+                      <label>💰 Price (LKR)</label>
                       <input
                         type="number"
                         name="price"
-                        step="1"
+                        step="50"
+                        min="500"
                         value={formData.price}
                         onChange={handleInputChange}
                         required
                       />
+                      <small>Suggested: 2D-800, 3D-1200, IMAX-1500</small>
                     </div>
 
                     <div className="form-group">
-                      <label>Total Seats</label>
+                      <label>💺 Total Seats</label>
                       <input
                         type="number"
                         name="totalSeats"
+                        min="1"
+                        max="300"
                         value={formData.totalSeats}
                         onChange={handleInputChange}
                         required
                       />
+                      <small>Available seats will be set to this value</small>
                     </div>
                   </div>
 

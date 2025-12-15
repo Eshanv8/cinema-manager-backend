@@ -42,11 +42,13 @@ function AdminDashboard() {
     name: '',
     description: '',
     price: '',
-    category: 'POSTERS',
+    category: 'TOYS',
     imageUrl: '',
     stock: '',
     bundle: false,
     bundleMovieId: '',
+    relatedMovie: '',
+    characterName: '',
     active: true
   });
 
@@ -243,11 +245,13 @@ function AdminDashboard() {
         name: '',
         description: '',
         price: '',
-        category: 'POSTERS',
+        category: 'TOYS',
         imageUrl: '',
         stock: '',
         bundle: false,
         bundleMovieId: '',
+        relatedMovie: '',
+        characterName: '',
         active: true
       });
       loadMerchandise();
@@ -784,6 +788,20 @@ function AdminDashboard() {
                       name="imageUrl"
                       placeholder="Image URL"
                       value={newMerchandise.imageUrl}
+                      onChange={handleMerchandiseInputChange}
+                    />
+                    <input
+                      type="text"
+                      name="relatedMovie"
+                      placeholder="Related Movie (e.g., The Dark Knight)"
+                      value={newMerchandise.relatedMovie}
+                      onChange={handleMerchandiseInputChange}
+                    />
+                    <input
+                      type="text"
+                      name="characterName"
+                      placeholder="Character Name (e.g., Batman)"
+                      value={newMerchandise.characterName}
                       onChange={handleMerchandiseInputChange}
                     />
                     <input
