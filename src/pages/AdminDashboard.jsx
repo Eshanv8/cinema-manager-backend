@@ -37,11 +37,13 @@ function AdminDashboard() {
     name: '',
     description: '',
     price: '',
-    category: 'POSTERS',
+    category: 'TOYS',
     imageUrl: '',
     stock: '',
     bundle: false,
     bundleMovieId: '',
+    relatedMovie: '',
+    characterName: '',
     active: true
   });
 
@@ -194,11 +196,13 @@ function AdminDashboard() {
         name: '',
         description: '',
         price: '',
-        category: 'POSTERS',
+        category: 'TOYS',
         imageUrl: '',
         stock: '',
         bundle: false,
         bundleMovieId: '',
+        relatedMovie: '',
+        characterName: '',
         active: true
       });
       loadMerchandise();
@@ -649,6 +653,9 @@ function AdminDashboard() {
                       onChange={handleMerchandiseInputChange}
                       required
                     >
+                      <option value="TOYS">Toys</option>
+                      <option value="ACTION_FIGURES">Action Figures</option>
+                      <option value="PLUSHIES">Plushies</option>
                       <option value="POSTERS">Posters</option>
                       <option value="T-SHIRTS">T-Shirts</option>
                       <option value="MUGS">Mugs</option>
@@ -676,6 +683,20 @@ function AdminDashboard() {
                       name="imageUrl"
                       placeholder="Image URL"
                       value={newMerchandise.imageUrl}
+                      onChange={handleMerchandiseInputChange}
+                    />
+                    <input
+                      type="text"
+                      name="relatedMovie"
+                      placeholder="Related Movie (e.g., The Dark Knight)"
+                      value={newMerchandise.relatedMovie}
+                      onChange={handleMerchandiseInputChange}
+                    />
+                    <input
+                      type="text"
+                      name="characterName"
+                      placeholder="Character Name (e.g., Batman)"
+                      value={newMerchandise.characterName}
                       onChange={handleMerchandiseInputChange}
                     />
                     <input

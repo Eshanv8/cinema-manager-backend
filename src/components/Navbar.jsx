@@ -56,6 +56,15 @@ function Navbar() {
           </li>
           <li className="nav-item">
             <Link 
+              to="/merchandise" 
+              className={`nav-link ${isActive('/merchandise') ? 'active' : ''}`}
+              onClick={() => setMenuOpen(false)}
+            >
+              🛍️ Merchandise
+            </Link>
+          </li>
+          <li className="nav-item">
+            <Link 
               to="/bookings" 
               className={`nav-link ${isActive('/bookings') ? 'active' : ''}`}
               onClick={() => setMenuOpen(false)}
