@@ -5,6 +5,7 @@ import movieService from '../services/movieService';
 import merchandiseService from '../services/merchandiseService';
 import foodService from '../services/foodService';
 import systemConfigService from '../services/systemConfigService';
+import userService from '../services/userService';
 import ShowtimeManagement from '../components/ShowtimeManagement';
 import './AdminDashboard.css';
 
@@ -16,6 +17,7 @@ function AdminDashboard() {
   const [movies, setMovies] = useState([]);
   const [merchandise, setMerchandise] = useState([]);
   const [foods, setFoods] = useState([]);
+  const [admins, setAdmins] = useState([]);
   const [foodCategories, setFoodCategories] = useState(['POPCORN', 'DRINKS', 'SNACKS', 'COMBOS']);
   const [merchandiseCategories, setMerchandiseCategories] = useState(['POSTERS', 'TOYS', 'CLOTHING']);
   
@@ -62,12 +64,28 @@ function AdminDashboard() {
     active: true
   });
 
+  // Admin Form State
+  const [showAddAdmin, setShowAddAdmin] = useState(false);
+  const [newAdmin, setNewAdmin] = useState({
+    username: '',
+    email: '',
+    password: '',
+    phone: ''
+  });
+  const [adminMessage, setAdminMessage] = useState({ type: '', text: '' });
+
   useEffect(() => {
     loadMovies();
     loadMerchandise();
     loadFoods();
     loadSystemConfigs();
   }, []);
+
+  useEffect(() => {
+    if (activeTab === 'admins') {
+      loadAdmins();
+    }
+  }, [activeTab]);
 
   const loadSystemConfigs = async () => {
     try {
@@ -135,6 +153,15 @@ function AdminDashboard() {
       const errorMsg = `Failed to load food items. Status: ${error.response?.status}. ${error.response?.data?.message || error.message}`;
       alert(errorMsg);
       setFoods([]);
+    }
+  };
+
+  const loadAdmins = async () => {
+    try {
+      const data = await userService.getAllAdmins();
+      setAdmins(data);
+    } catch (error) {
+      console.error('Error loading admins:', error);
     }
   };
 
@@ -321,6 +348,58 @@ function AdminDashboard() {
     }
   };
 
+  // Admin User Creation Handlers
+  const handleAdminChange = (e) => {
+    const { name, value } = e.target;
+    setNewAdmin(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleCreateAdmin = async (e) => {
+    e.preventDefault();
+    setAdminMessage({ type: '', text: '' });
+
+    // Validation
+    if (!newAdmin.username || !newAdmin.email || !newAdmin.password) {
+      setAdminMessage({ type: 'error', text: 'Please fill in all required fields' });
+      return;
+    }
+
+    if (newAdmin.password.length < 6) {
+      setAdminMessage({ type: 'error', text: 'Password must be at least 6 characters long' });
+      return;
+    }
+
+    if (!newAdmin.email.includes('@')) {
+      setAdminMessage({ type: 'error', text: 'Please enter a valid email address' });
+      return;
+    }
+
+    try {
+      await userService.createAdminUser(newAdmin);
+      setAdminMessage({ type: 'success', text: 'Admin user created successfully!' });
+      
+      // Reload admin list
+      loadAdmins();
+      
+      // Reset form
+      setNewAdmin({
+        username: '',
+        email: '',
+        password: '',
+        phone: ''
+      });
+      
+      // Hide form after 2 seconds
+      setTimeout(() => {
+        setShowAddAdmin(false);
+        setAdminMessage({ type: '', text: '' });
+      }, 2000);
+    } catch (error) {
+      const errorMessage = error.response?.data?.message || error.message || 'Failed to create admin user';
+      setAdminMessage({ type: 'error', text: errorMessage });
+    }
+  };
+
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
@@ -389,6 +468,13 @@ function AdminDashboard() {
             <span className="nav-icon">🎁</span>
             <span className="nav-text">Offers & Deals</span>
           </button>
+          <button 
+            className={`nav-item ${activeTab === 'admins' ? 'active' : ''}`}
+            onClick={() => setActiveTab('admins')}
+          >
+            <span className="nav-icon">👥</span>
+            <span className="nav-text">Admin Users</span>
+          </button>
         </nav>
 
         <div className="sidebar-footer">
@@ -409,6 +495,7 @@ function AdminDashboard() {
             {activeTab === 'merchandise' && '🛍️ Merchandise Management'}
             {activeTab === 'foods' && '🍿 Food & Beverage Management'}
             {activeTab === 'offers' && '🎁 Offers & Promotions'}
+            {activeTab === 'admins' && '👥 Admin User Management'}
           </h1>
           <div className="header-actions">
             <span className="timestamp">{new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</span>
@@ -948,6 +1035,178 @@ function AdminDashboard() {
                 <p>Create special offers and promotions to attract more customers</p>
                 <button className="btn-secondary">Create First Offer</button>
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* Admin User Management */}
+        {activeTab === 'admins' && (
+          <div className="tab-content">
+            <div className="admin-users-section">
+              <div className="section-header-with-action">
+                <h2>Manage Admin Users</h2>
+                <button 
+                  className="btn-primary"
+                  onClick={() => setShowAddAdmin(!showAddAdmin)}
+                >
+                  {showAddAdmin ? '✕ Cancel' : '+ Create New Admin'}
+                </button>
+              </div>
+
+              {/* Existing Admins List */}
+              {admins.length > 0 && !showAddAdmin && (
+                <div className="admins-list-container">
+                  <h3>Current Admin Users ({admins.length})</h3>
+                  <div className="admins-grid">
+                    {admins.map((admin) => (
+                      <div key={admin.id} className="admin-card">
+                        <div className="admin-card-header">
+                          <div className="admin-avatar">
+                            {admin.username?.charAt(0).toUpperCase() || 'A'}
+                          </div>
+                          <div className="admin-info">
+                            <h4>{admin.username}</h4>
+                            <span className="admin-role-badge">ADMIN</span>
+                          </div>
+                        </div>
+                        <div className="admin-card-body">
+                          <div className="info-row">
+                            <span className="info-label">📧 Email:</span>
+                            <span className="info-value">{admin.email}</span>
+                          </div>
+                          {admin.phone && (
+                            <div className="info-row">
+                              <span className="info-label">📱 Phone:</span>
+                              <span className="info-value">{admin.phone}</span>
+                            </div>
+                          )}
+                          <div className="info-row">
+                            <span className="info-label">📅 Created:</span>
+                            <span className="info-value">
+                              {new Date(admin.createdAt).toLocaleDateString()}
+                            </span>
+                          </div>
+                          <div className="info-row">
+                            <span className="info-label">Status:</span>
+                            <span className={`status-badge ${admin.active ? 'active' : 'inactive'}`}>
+                              {admin.active ? '✓ Active' : '✗ Inactive'}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Admin Creation Form */}
+              {showAddAdmin && (
+                <div className="form-container">
+                  <h3>Create New Admin Account</h3>
+                  <p className="form-subtitle">Add a new administrator to manage the cinema system</p>
+                  
+                  {adminMessage.text && (
+                    <div className={`message ${adminMessage.type}`}>
+                      {adminMessage.text}
+                    </div>
+                  )}
+
+                  <form onSubmit={handleCreateAdmin} className="admin-form">
+                    <div className="form-row">
+                      <div className="form-group">
+                        <label>Username *</label>
+                        <input
+                          type="text"
+                          name="username"
+                          value={newAdmin.username}
+                          onChange={handleAdminChange}
+                          placeholder="Enter username"
+                          required
+                        />
+                      </div>
+                      <div className="form-group">
+                        <label>Email *</label>
+                        <input
+                          type="email"
+                          name="email"
+                          value={newAdmin.email}
+                          onChange={handleAdminChange}
+                          placeholder="Enter email address"
+                          required
+                        />
+                      </div>
+                    </div>
+
+                    <div className="form-row">
+                      <div className="form-group">
+                        <label>Password *</label>
+                        <input
+                          type="password"
+                          name="password"
+                          value={newAdmin.password}
+                          onChange={handleAdminChange}
+                          placeholder="Enter password (min 6 characters)"
+                          minLength="6"
+                          required
+                        />
+                      </div>
+                      <div className="form-group">
+                        <label>Phone Number</label>
+                        <input
+                          type="tel"
+                          name="phone"
+                          value={newAdmin.phone}
+                          onChange={handleAdminChange}
+                          placeholder="Enter phone number (optional)"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="form-actions">
+                      <button type="submit" className="btn-primary">
+                        Create Admin User
+                      </button>
+                      <button 
+                        type="button" 
+                        className="btn-secondary"
+                        onClick={() => {
+                          setShowAddAdmin(false);
+                          setAdminMessage({ type: '', text: '' });
+                          setNewAdmin({
+                            username: '',
+                            email: '',
+                            password: '',
+                            phone: ''
+                          });
+                        }}
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              )}
+
+              {/* Admin Users Info */}
+              {!showAddAdmin && (
+                <div className="info-card">
+                  <div className="info-icon">👥</div>
+                  <h3>Admin User Management</h3>
+                  <p>Create and manage administrator accounts for your cinema system.</p>
+                  <ul className="info-list">
+                    <li>✅ Admin users have full access to all management features</li>
+                    <li>✅ Each admin can manage movies, showtimes, merchandise, and food items</li>
+                    <li>✅ Admins can create other admin accounts</li>
+                    <li>✅ Secure password encryption for all accounts</li>
+                  </ul>
+                  <button 
+                    className="btn-primary"
+                    onClick={() => setShowAddAdmin(true)}
+                  >
+                    Create Your First Admin
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         )}
