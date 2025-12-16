@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+https://images.unsplash.com/photo-1531525645387-7f14be1bdbbd?w=500https://images.unsplash.com/photo-1608889476561-6242cfdbf622?w=500import React, { useState, useEffect } from 'react';
 import merchandiseService from '../services/merchandiseService';
 import './MerchandiseManagement.css';
 
@@ -52,8 +52,32 @@ const MerchandiseManagement = () => {
     });
   };
 
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (file.size > 5000000) { // 5MB limit
+        alert('Image size should be less than 5MB');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setCurrentMerchandise({
+          ...currentMerchandise,
+          imageUrl: reader.result
+        });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    if (!currentMerchandise.imageUrl) {
+      alert('Please provide an image URL or upload an image');
+      return;
+    }
+    
     try {
       const merchandiseData = {
         ...currentMerchandise,
@@ -228,15 +252,74 @@ const MerchandiseManagement = () => {
           </div>
 
           <div className="form-group">
-            <label>Image URL *</label>
-            <input
-              type="url"
-              name="imageUrl"
-              value={currentMerchandise.imageUrl}
-              onChange={handleInputChange}
-              required
-              placeholder="https://example.com/image.jpg"
-            />
+            <label>Upload Toy Image *</label>
+            <div style={{ 
+              padding: '30px', 
+              background: '#2a2a2a', 
+              borderRadius: '10px', 
+              border: '2px dashed #e50914',
+              textAlign: 'center'
+            }}>
+              <div style={{ fontSize: '3rem', marginBottom: '15px' }}>📷</div>
+              <label style={{ 
+                display: 'block', 
+                marginBottom: '15px', 
+                fontSize: '1.1rem', 
+                color: '#fff',
+                fontWeight: 'bold'
+              }}>
+                Click to Upload Image from Your Desktop
+              </label>
+              <input
+                type="file"
+                accept="image/png, image/jpeg, image/jpg"
+                onChange={handleImageUpload}
+                style={{ 
+                  padding: '12px', 
+                  background: '#e50914', 
+                  color: '#fff', 
+                  border: 'none', 
+                  borderRadius: '8px',
+                  width: '100%',
+                  cursor: 'pointer',
+                  fontWeight: 'bold',
+                  fontSize: '1rem'
+                }}
+              />
+              <p style={{ color: '#999', fontSize: '0.9rem', marginTop: '10px' }}>
+                📁 Supported formats: PNG, JPG, JPEG (Max 5MB)
+              </p>
+            </div>
+            
+            {currentMerchandise.imageUrl && (
+              <div style={{ 
+                marginTop: '20px', 
+                padding: '15px', 
+                background: '#1a1a1a', 
+                borderRadius: '10px',
+                textAlign: 'center',
+                border: '2px solid #4CAF50'
+              }}>
+                <p style={{ color: '#4CAF50', marginBottom: '15px', fontWeight: 'bold', fontSize: '1.1rem' }}>
+                  ✓ Image Uploaded Successfully!
+                </p>
+                <img 
+                  src={currentMerchandise.imageUrl} 
+                  alt="Preview" 
+                  style={{ 
+                    maxWidth: '300px', 
+                    maxHeight: '300px', 
+                    border: '3px solid #4CAF50', 
+                    borderRadius: '10px',
+                    objectFit: 'contain',
+                    boxShadow: '0 4px 10px rgba(76, 175, 80, 0.3)'
+                  }}
+                  onError={(e) => {
+                    e.target.style.display = 'none';
+                  }}
+                />
+              </div>
+            )}
           </div>
 
           <div className="form-group checkbox-group">

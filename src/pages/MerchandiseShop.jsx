@@ -35,6 +35,7 @@ const MerchandiseShop = () => {
       const data = await merchandiseService.getAllMerchandise();
       console.log('Shop - Fetched merchandise:', data);
       console.log('Shop - First item:', data[0]);
+      console.log('Shop - Image URLs:', data.map(item => ({ name: item.name, imageUrl: item.imageUrl })));
       setMerchandiseList(data);
     } catch (error) {
       console.error('Error fetching merchandise:', error);
