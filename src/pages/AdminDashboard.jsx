@@ -179,6 +179,24 @@ function AdminDashboard() {
     });
   };
 
+  const handleMerchandiseImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (file.size > 5000000) {
+        alert('Image size should be less than 5MB');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setNewMerchandise({
+          ...newMerchandise,
+          imageUrl: reader.result
+        });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleAddMerchandise = async (e) => {
     e.preventDefault();
     try {
@@ -678,13 +696,27 @@ function AdminDashboard() {
                       onChange={handleMerchandiseInputChange}
                       required
                     />
-                    <input
-                      type="url"
-                      name="imageUrl"
-                      placeholder="Image URL"
-                      value={newMerchandise.imageUrl}
-                      onChange={handleMerchandiseInputChange}
-                    />
+                    <div style={{ padding: '20px', background: '#f5f5f5', borderRadius: '8px', border: '2px dashed #e50914' }}>
+                      <label style={{ display: 'block', marginBottom: '10px', fontWeight: 'bold', fontSize: '1.1rem' }}>
+                        📷 Upload Toy Image
+                      </label>
+                      <input
+                        type="file"
+                        accept="image/png, image/jpeg, image/jpg"
+                        onChange={handleMerchandiseImageUpload}
+                        style={{ width: '100%', padding: '10px', cursor: 'pointer' }}
+                      />
+                      {newMerchandise.imageUrl && (
+                        <div style={{ marginTop: '15px', textAlign: 'center' }}>
+                          <img 
+                            src={newMerchandise.imageUrl} 
+                            alt="Preview" 
+                            style={{ maxWidth: '200px', maxHeight: '200px', border: '2px solid #4CAF50', borderRadius: '8px' }}
+                          />
+                          <p style={{ color: '#4CAF50', fontWeight: 'bold', marginTop: '10px' }}>✓ Image Uploaded</p>
+                        </div>
+                      )}
+                    </div>
                     <input
                       type="text"
                       name="relatedMovie"
