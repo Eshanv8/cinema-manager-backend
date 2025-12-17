@@ -13,6 +13,7 @@ import AdminDashboard from './pages/AdminDashboard';
 import ProfilePage from './pages/ProfilePage';
 import TrailerPlayer from './components/TrailerPlayer';
 import MerchandiseShop from './pages/MerchandiseShop';
+import CartPage from './pages/CartPage';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 
@@ -115,6 +116,14 @@ function AppContent() {
           element={
             <ProtectedRoute>
               <MerchandiseShop />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/cart"
+          element={
+            <ProtectedRoute>
+              <CartPage />
             </ProtectedRoute>
           }
         />

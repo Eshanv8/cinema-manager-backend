@@ -1,14 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import merchandiseService from '../services/merchandiseService';
+import cartService from '../services/cartService';
+import { useAuth } from '../context/AuthContext';
 import './MerchandiseShop.css';
 
 const MerchandiseShop = () => {
+  const { isAuthenticated } = useAuth();
   const [merchandiseList, setMerchandiseList] = useState([]);
   const [filteredList, setFilteredList] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('ALL');
   const [searchQuery, setSearchQuery] = useState('');
-  const [cart, setCart] = useState([]);
+  const [cart, setCart] = useState(null);
   const [showCart, setShowCart] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const categories = [
     'ALL',
@@ -23,8 +27,10 @@ const MerchandiseShop = () => {
 
   useEffect(() => {
     fetchMerchandise();
-    loadCart();
-  }, []);
+    if (isAuthenticated) {
+      loadCart();
+    }
+  }, [isAuthenticated]);
 
   useEffect(() => {
     filterMerchandise();
@@ -34,7 +40,6 @@ const MerchandiseShop = () => {
     try {
       const data = await merchandiseService.getAllMerchandise();
       console.log('Shop - Fetched merchandise:', data);
-      console.log('Shop - First item:', data[0]);
       setMerchandiseList(data);
     } catch (error) {
       console.error('Error fetching merchandise:', error);
@@ -61,76 +66,125 @@ const MerchandiseShop = () => {
     setFilteredList(filtered);
   };
 
-  const loadCart = () => {
-    const savedCart = localStorage.getItem('merchandiseCart');
-    if (savedCart) {
-      setCart(JSON.parse(savedCart));
+  const loadCart = async () => {
+    if (!isAuthenticated) {
+      setCart(null);
+      return;
     }
-  };
-
-  const saveCart = (newCart) => {
-    localStorage.setItem('merchandiseCart', JSON.stringify(newCart));
-    setCart(newCart);
-  };
-
-  const addToCart = (item) => {
-    const existingItem = cart.find(cartItem => cartItem.id === item.id);
-    let newCart;
-
-    if (existingItem) {
-      if (existingItem.quantity >= item.stock) {
-        alert('Cannot add more items than available in stock!');
-        return;
+    
+    try {
+      setLoading(true);
+      const cartData = await cartService.getCart();
+      setCart(cartData);
+    } catch (error) {
+      console.error('Error loading cart:', error);
+      if (error.response?.status === 401) {
+        setCart(null);
       }
-      newCart = cart.map(cartItem =>
-        cartItem.id === item.id
-          ? { ...cartItem, quantity: cartItem.quantity + 1 }
-          : cartItem
-      );
-    } else {
-      newCart = [...cart, { ...item, quantity: 1 }];
+    } finally {
+      setLoading(false);
     }
-
-    saveCart(newCart);
-    alert(`${item.name} added to cart!`);
   };
 
-  const updateQuantity = (itemId, newQuantity) => {
-    if (newQuantity <= 0) {
-      removeFromCart(itemId);
+  const addToCart = async (item) => {
+    if (!isAuthenticated) {
+      alert('Please login to add items to cart!');
       return;
     }
 
-    const item = merchandiseList.find(m => m.id === itemId);
-    if (item && newQuantity > item.stock) {
-      alert('Cannot add more items than available in stock!');
+    try {
+      setLoading(true);
+      await cartService.addToCart(item.id, 1);
+      await loadCart();
+      alert(`${item.name} added to cart!`);
+    } catch (error) {
+      console.error('Error adding to cart:', error);
+      if (error.response?.data?.message) {
+        alert(error.response.data.message);
+      } else {
+        alert('Error adding item to cart. Please try again.');
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const updateQuantity = async (merchandiseId, newQuantity) => {
+    if (!isAuthenticated) {
       return;
     }
 
-    const newCart = cart.map(cartItem =>
-      cartItem.id === itemId
-        ? { ...cartItem, quantity: newQuantity }
-        : cartItem
-    );
-    saveCart(newCart);
+    try {
+      setLoading(true);
+      await cartService.updateCartItem(merchandiseId, newQuantity);
+      await loadCart();
+    } catch (error) {
+      console.error('Error updating quantity:', error);
+      if (error.response?.data?.message) {
+        alert(error.response.data.message);
+      } else {
+        alert('Error updating cart. Please try again.');
+      }
+      await loadCart(); // Reload to revert changes
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const removeFromCart = (itemId) => {
-    const newCart = cart.filter(item => item.id !== itemId);
-    saveCart(newCart);
+  const removeFromCart = async (merchandiseId) => {
+    if (!isAuthenticated) {
+      return;
+    }
+
+    try {
+      setLoading(true);
+      await cartService.removeFromCart(merchandiseId);
+      await loadCart();
+    } catch (error) {
+      console.error('Error removing from cart:', error);
+      alert('Error removing item from cart. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const getCartTotal = () => {
-    return cart.reduce((total, item) => total + (item.price * item.quantity), 0);
+    if (!cart || !cart.items) return 0;
+    return cart.total || 0;
   };
 
-  const handleCheckout = () => {
-    if (cart.length === 0) {
+  const getCartItemCount = () => {
+    if (!cart || !cart.items) return 0;
+    return cart.items.reduce((total, item) => total + item.quantity, 0);
+  };
+
+  const handleCheckout = async () => {
+    if (!isAuthenticated) {
+      alert('Please login to checkout!');
+      return;
+    }
+
+    if (!cart || cart.items.length === 0) {
       alert('Your cart is empty!');
       return;
     }
-    alert('Checkout functionality will be implemented soon!');
-    // TODO: Implement checkout with order creation
+
+    try {
+      setLoading(true);
+      await cartService.checkout();
+      alert('Checkout successful! Thank you for your purchase.');
+      await loadCart(); // This will create a new cart
+      setShowCart(false);
+    } catch (error) {
+      console.error('Error during checkout:', error);
+      if (error.response?.data?.message) {
+        alert(error.response.data.message);
+      } else {
+        alert('Error during checkout. Please try again.');
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -163,7 +217,7 @@ const MerchandiseShop = () => {
         </div>
 
         <button className="cart-toggle" onClick={() => setShowCart(!showCart)}>
-          🛒 Cart ({cart.length}) - Rs. {getCartTotal().toFixed(2)}
+          🛒 Cart ({getCartItemCount()}) - Rs. {getCartTotal().toFixed(2)}
         </button>
       </div>
 
@@ -173,13 +227,17 @@ const MerchandiseShop = () => {
             <h2>Shopping Cart</h2>
             <button onClick={() => setShowCart(false)}>✕</button>
           </div>
-          {cart.length === 0 ? (
+          {!isAuthenticated ? (
+            <p className="empty-cart">Please login to view your cart</p>
+          ) : loading ? (
+            <p className="empty-cart">Loading...</p>
+          ) : !cart || cart.items.length === 0 ? (
             <p className="empty-cart">Your cart is empty</p>
           ) : (
             <>
               <div className="cart-items">
-                {cart.map(item => (
-                  <div key={item.id} className="cart-item">
+                {cart.items.map(item => (
+                  <div key={item.merchandiseId} className="cart-item">
                     <img 
                       src={item.imageUrl || 'https://via.placeholder.com/80x80?text=No+Image'} 
                       alt={item.name}
@@ -192,16 +250,23 @@ const MerchandiseShop = () => {
                       <h4>{item.name}</h4>
                       <p className="item-price">Rs. {item.price.toFixed(2)}</p>
                       <div className="quantity-controls">
-                        <button onClick={() => updateQuantity(item.id, item.quantity - 1)}>-</button>
+                        <button 
+                          onClick={() => updateQuantity(item.merchandiseId, item.quantity - 1)}
+                          disabled={loading}
+                        >-</button>
                         <span>{item.quantity}</span>
-                        <button onClick={() => updateQuantity(item.id, item.quantity + 1)}>+</button>
+                        <button 
+                          onClick={() => updateQuantity(item.merchandiseId, item.quantity + 1)}
+                          disabled={loading}
+                        >+</button>
                       </div>
                     </div>
                     <div className="cart-item-total">
                       <p>Rs. {(item.price * item.quantity).toFixed(2)}</p>
                       <button 
                         className="remove-btn"
-                        onClick={() => removeFromCart(item.id)}
+                        onClick={() => removeFromCart(item.merchandiseId)}
+                        disabled={loading}
                       >
                         Remove
                       </button>
@@ -213,8 +278,12 @@ const MerchandiseShop = () => {
                 <div className="cart-total">
                   <h3>Total: Rs. {getCartTotal().toFixed(2)}</h3>
                 </div>
-                <button className="checkout-btn" onClick={handleCheckout}>
-                  Proceed to Checkout
+                <button 
+                  className="checkout-btn" 
+                  onClick={handleCheckout}
+                  disabled={loading}
+                >
+                  {loading ? 'Processing...' : 'Proceed to Checkout'}
                 </button>
               </div>
             </>
@@ -264,9 +333,9 @@ const MerchandiseShop = () => {
                   <button
                     className="add-to-cart-btn"
                     onClick={() => addToCart(item)}
-                    disabled={item.stock === 0}
+                    disabled={item.stock === 0 || loading}
                   >
-                    {item.stock === 0 ? 'Out of Stock' : 'Add to Cart'}
+                    {item.stock === 0 ? 'Out of Stock' : loading ? 'Adding...' : 'Add to Cart'}
                   </button>
                 </div>
               </div>

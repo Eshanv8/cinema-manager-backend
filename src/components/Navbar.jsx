@@ -1,13 +1,33 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import cartService from '../services/cartService';
 import './Navbar.css';
 
 function Navbar() {
-  const { user, logout } = useAuth();
+  const { user, logout, isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [cartItemCount, setCartItemCount] = useState(0);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      loadCartCount();
+    }
+  }, [isAuthenticated, location.pathname]);
+
+  const loadCartCount = async () => {
+    try {
+      const cart = await cartService.getCart();
+      if (cart && cart.items) {
+        const count = cart.items.reduce((total, item) => total + item.quantity, 0);
+        setCartItemCount(count);
+      }
+    } catch (error) {
+      console.error('Error loading cart count:', error);
+    }
+  };
 
   const handleLogout = () => {
     logout();
@@ -61,6 +81,16 @@ function Navbar() {
               onClick={() => setMenuOpen(false)}
             >
               🛍️ Merchandise
+            </Link>
+          </li>
+          <li className="nav-item">
+            <Link 
+              to="/cart" 
+              className={`nav-link cart-link ${isActive('/cart') ? 'active' : ''}`}
+              onClick={() => setMenuOpen(false)}
+            >
+              🛒 Cart
+              {cartItemCount > 0 && <span className="cart-badge">{cartItemCount}</span>}
             </Link>
           </li>
           <li className="nav-item">
