@@ -1,56 +1,106 @@
 # Cinema Management System
 
-A full-stack web application for managing cinema operations with user authentication. Built with Spring Boot (backend) and React (frontend).
+A full-stack web application for managing cinema operations with user authentication, booking system, and merchandise shop. Built with Spring Boot (backend) and React (frontend).
 
-## Features
+## 🎬 Features
 
-- User Registration (Sign Up)
-- User Login with secure password encryption (BCrypt)
-- MySQL database integration
-- RESTful API
-- Modern React UI with responsive design
-- CORS configuration for cross-origin requests
-- Spring Security integration
+- **User Management**
+  - User Registration & Login with JWT authentication
+  - Admin Dashboard with role-based access control
+  - User Profile with loyalty points system
+  
+- **Movie Management**
+  - Browse now showing and coming soon movies
+  - Movie details with trailers
+  - Dynamic seat selection
+  
+- **Booking System**
+  - Real-time seat availability
+  - Food and merchandise combo booking
+  - Booking history and management
+  
+- **Configuration System**
+  - Database-driven configuration (no hard-coded values)
+  - Environment variable support
+  - Runtime configuration updates
 
-## Technologies Used
+## 🚀 Technologies Used
 
 ### Backend
 - Java 21
 - Spring Boot 3.5.7
-- Spring Data JPA
-- Spring Security
-- MySQL Database
+- Spring Data MongoDB
+- Spring Security with JWT
+- MongoDB Atlas
 - Maven
 - BCrypt Password Encryption
 
 ### Frontend
 - React 18
+- React Router
 - Axios for API calls
-- CSS3 for styling
+- CSS3 with modern animations
 
-## Prerequisites
+## 📋 Prerequisites
 
-Before running this application, make sure you have installed:
+Before running this application, ensure you have:
 
 1. **Java Development Kit (JDK) 21**
 2. **Maven** (for building the backend)
-3. **MySQL Server** (running on localhost:3306)
-4. **Node.js and npm** (for running the React frontend)
+3. **MongoDB Atlas Account** (or local MongoDB instance)
+4. **Node.js and npm** (v16 or higher)
+
+## ⚙️ Configuration
+
+**Important:** All hard-coded values have been removed! The system now uses environment variables and database-driven configuration.
+
+### 📚 Configuration Documentation
+
+For complete setup and configuration instructions, see:
+- **Start Here:** [DOCUMENTATION_INDEX.md](DOCUMENTATION_INDEX.md) - Navigate all documentation
+- **Quick Start:** [SUMMARY.md](SUMMARY.md) - 5-minute overview
+- **Setup Guide:** [POST_MIGRATION_CHECKLIST.md](POST_MIGRATION_CHECKLIST.md) - Step-by-step instructions
+- **Quick Reference:** [QUICK_CONFIG_REFERENCE.md](QUICK_CONFIG_REFERENCE.md) - Common tasks
+- **Complete Guide:** [CONFIGURATION_GUIDE.md](CONFIGURATION_GUIDE.md) - Full documentation
+
+### Quick Setup
+
+1. **Backend Configuration**
+   ```bash
+   export MONGODB_URI="your-mongodb-connection-string"
+   export MONGODB_DATABASE="cinema_db"
+   export JWT_SECRET="your-256-bit-secret-key"
+   ```
+
+2. **Frontend Configuration**
+   - `.env` file already created with:
+   ```env
+   REACT_APP_API_URL=http://localhost:8081/api
+   ```
+
+3. **Start Application**
+   ```bash
+   # Backend
+   ./mvnw spring-boot:run
+   
+   # Frontend
+   npm start
+   ```
+
+For detailed instructions, see [POST_MIGRATION_CHECKLIST.md](POST_MIGRATION_CHECKLIST.md)
 
 ## Database Setup
 
-1. Install MySQL Server if not already installed
-2. Start MySQL Server
-3. Create a database (the application will auto-create tables):
-   ```sql
-   CREATE DATABASE cinema_db;
+1. **Create MongoDB Database** (Atlas or Local)
+2. **Set Environment Variable**:
+   ```bash
+   export MONGODB_URI="your-mongodb-connection-string"
+   export MONGODB_DATABASE="cinema_db"
    ```
-4. Update `src/main/resources/application.properties` if needed:
-   ```properties
-   spring.datasource.username=root
-   spring.datasource.password=root
-   ```
-   Change the username and password to match your MySQL credentials.
+3. The application will auto-initialize:
+   - System configurations
+   - Default admin user
+   - Sample data (if database is empty)
 
 ## Installation & Setup
 

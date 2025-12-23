@@ -37,4 +37,10 @@ public class SystemConfig {
     public static final String FOOD_CATEGORIES = "FOOD_CATEGORIES";
     public static final String MERCHANDISE_CATEGORIES = "MERCHANDISE_CATEGORIES";
     public static final String DEFAULT_TICKET_PRICE = "DEFAULT_TICKET_PRICE";
+    public static final String SEAT_ROWS = "SEAT_ROWS";
+    public static final String SEATS_PER_ROW = "SEATS_PER_ROW";
+    public static final String SEAT_TYPES = "SEAT_TYPES";
+    public static final String WELCOME_BONUS = "WELCOME_BONUS";
+    public static final String DEFAULT_ADMIN_EMAIL = "DEFAULT_ADMIN_EMAIL";
+    public static final String DEFAULT_ADMIN_PASSWORD = "DEFAULT_ADMIN_PASSWORD";
 }

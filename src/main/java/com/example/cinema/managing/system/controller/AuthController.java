@@ -4,7 +4,9 @@ import com.example.cinema.managing.system.dto.*;
 import com.example.cinema.managing.system.model.User;
 import com.example.cinema.managing.system.repository.UserRepository;
 import com.example.cinema.managing.system.security.JwtTokenProvider;
+import com.example.cinema.managing.system.service.SystemConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -15,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "${app.cors.allowed-origins}")
 public class AuthController {
 
     @Autowired
@@ -30,6 +32,12 @@ public class AuthController {
     @Autowired
     private JwtTokenProvider tokenProvider;
 
+    @Autowired
+    private SystemConfigService systemConfigService;
+
+    @Value("${app.user.welcome-bonus:100}")
+    private int welcomeBonus;
+
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@RequestBody SignupRequest signupRequest) {
         if (userRepository.findByEmail(signupRequest.getEmail()).isPresent()) {
@@ -42,10 +50,10 @@ public class AuthController {
         user.setPassword(passwordEncoder.encode(signupRequest.getPassword()));
         user.setPhone(signupRequest.getPhone());
         user.setRole("USER");
-        user.setLoyaltyPoints(100); // Welcome bonus
+        user.setLoyaltyPoints(welcomeBonus);
         
         userRepository.save(user);
-        return ResponseEntity.ok(new MessageResponse("User registered successfully! Welcome bonus: 100 points"));
+        return ResponseEntity.ok(new MessageResponse("User registered successfully! Welcome bonus: " + welcomeBonus + " points"));
     }
 
     @PostMapping("/login")

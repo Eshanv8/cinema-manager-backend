@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -40,6 +41,18 @@ public class DataInitializer implements CommandLineRunner {
 
     @Autowired
     private SystemConfigService systemConfigService;
+    
+    @Value("${app.admin.default-email:admin@cinema.com}")
+    private String adminEmail;
+    
+    @Value("${app.admin.default-password:admin123}")
+    private String adminPassword;
+    
+    @Value("${app.seats.rows:A,B,C,D,E,F,G,H,I,J}")
+    private String seatRowsConfig;
+
+    @Value("${app.seats.per-row:10}")
+    private int seatsPerRowConfig;
 
     @Override
     public void run(String... args) throws Exception {
@@ -50,17 +63,17 @@ public class DataInitializer implements CommandLineRunner {
             System.out.println("System configurations initialized!");
 
             // Create default admin user if not exists
-            if (!userRepository.findByEmail("admin@cinema.com").isPresent()) {
+            if (!userRepository.findByEmail(adminEmail).isPresent()) {
                 System.out.println("Creating default admin user...");
                 User admin = new User();
                 admin.setUsername("admin");
-                admin.setEmail("admin@cinema.com");
-                admin.setPassword(passwordEncoder.encode("admin123"));
+                admin.setEmail(adminEmail);
+                admin.setPassword(passwordEncoder.encode(adminPassword));
                 admin.setPhone("1234567890");
                 admin.setRole("ADMIN");
                 admin.setLoyaltyPoints(0);
                 userRepository.save(admin);
-                System.out.println("Default admin user created! Email: admin@cinema.com, Password: admin123");
+                System.out.println("Default admin user created! Email: " + adminEmail + ", Password: " + adminPassword);
             }
 
             // Check if movies already exist
@@ -167,9 +180,9 @@ public class DataInitializer implements CommandLineRunner {
 
     private void generateSeats(Showtime showtime) {
         List<Seat> seats = new ArrayList<>();
-        String[] rows = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J"};
-        int seatsPerRow = 10;
-
+        String[] rows = seatRowsConfig.split(",");
+        int seatsPerRow = seatsPerRowConfig;
+        
         for (int i = 0; i < rows.length; i++) {
             for (int j = 1; j <= seatsPerRow; j++) {
                 Seat seat = new Seat();

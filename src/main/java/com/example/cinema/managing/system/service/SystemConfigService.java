@@ -70,6 +70,22 @@ public class SystemConfigService {
         initializeIfNotExists(SystemConfig.DEFAULT_TICKET_PRICE, "NUMBER",
             1500.0,
             "Default ticket price in LKR");
+            
+        initializeIfNotExists(SystemConfig.SEAT_ROWS, "LIST",
+            Arrays.asList("A", "B", "C", "D", "E", "F", "G", "H", "I", "J"),
+            "Seat row labels");
+            
+        initializeIfNotExists(SystemConfig.SEATS_PER_ROW, "NUMBER",
+            10,
+            "Number of seats per row");
+            
+        initializeIfNotExists(SystemConfig.SEAT_TYPES, "LIST",
+            Arrays.asList("STANDARD", "VIP", "PREMIUM"),
+            "Available seat types");
+            
+        initializeIfNotExists(SystemConfig.WELCOME_BONUS, "NUMBER",
+            100,
+            "Welcome bonus points for new users");
     }
 
     private void initializeIfNotExists(String key, String type, Object value, String description) {

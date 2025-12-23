@@ -2,14 +2,17 @@ package com.example.cinema.managing.system.service;
 
 import com.example.cinema.managing.system.model.Showtime;
 import com.example.cinema.managing.system.model.Seat;
+import com.example.cinema.managing.system.model.SystemConfig;
 import com.example.cinema.managing.system.repository.ShowtimeRepository;
 import com.example.cinema.managing.system.repository.SeatRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -20,6 +23,15 @@ public class ShowtimeService {
 
     @Autowired
     private SeatRepository seatRepository;
+    
+    @Autowired
+    private SystemConfigService systemConfigService;
+
+    @Value("${app.seats.rows:A,B,C,D,E,F,G,H,I,J}")
+    private String seatRowsConfig;
+
+    @Value("${app.seats.per-row:10}")
+    private int seatsPerRowConfig;
 
     public List<Showtime> getAllShowtimes() {
         return showtimeRepository.findAll();
@@ -55,18 +67,34 @@ public class ShowtimeService {
 
     private void generateSeats(Showtime showtime) {
         List<Seat> seats = new ArrayList<>();
-        String[] rows = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J"};
-        int seatsPerRow = 10;
         
-        for (int i = 0; i < rows.length; i++) {
+        // Get seat configuration from SystemConfig or environment variable
+        List<String> rows = (List<String>) systemConfigService.getConfigValue(
+            SystemConfig.SEAT_ROWS, 
+            Arrays.asList(seatRowsConfig.split(","))
+        );
+        
+        int seatsPerRow = ((Number) systemConfigService.getConfigValue(
+            SystemConfig.SEATS_PER_ROW, 
+            seatsPerRowConfig
+        )).intValue();
+        
+        List<String> seatTypes = (List<String>) systemConfigService.getConfigValue(
+            SystemConfig.SEAT_TYPES,
+            Arrays.asList("STANDARD")
+        );
+        
+        String defaultSeatType = seatTypes.isEmpty() ? "STANDARD" : seatTypes.get(0);
+        
+        for (int i = 0; i < rows.size(); i++) {
             for (int j = 1; j <= seatsPerRow; j++) {
                 Seat seat = new Seat();
                 seat.setShowtimeId(showtime.getId());
                 seat.setSeatNumber(String.valueOf(j));
-                seat.setRow(rows[i]);
+                seat.setRow(rows.get(i));
                 seat.setColumn(j);
                 seat.setStatus("AVAILABLE");
-                seat.setType("STANDARD");
+                seat.setType(defaultSeatType);
                 seat.setPrice(showtime.getPrice());
                 
                 seats.add(seat);
