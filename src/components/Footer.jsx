@@ -78,14 +78,19 @@ function Footer() {
           subject: '',
           message: ''
         });
+        alert('Thank you! Your message has been submitted successfully.');
         setTimeout(() => {
           setContactSubmitted(false);
           setShowContact(false);
         }, 3000);
+      } else {
+        const errorData = await response.text();
+        console.error('Server error:', errorData);
+        alert('Failed to submit. Server error: ' + response.status);
       }
     } catch (error) {
       console.error('Error submitting contact form:', error);
-      alert('Failed to submit contact form. Please try again.');
+      alert('Failed to submit contact form. Please make sure the backend server is running on port 8081.');
     } finally {
       setContactSubmitting(false);
     }

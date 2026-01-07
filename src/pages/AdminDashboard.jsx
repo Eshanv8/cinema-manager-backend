@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import movieService from '../services/movieService';
 import merchandiseService from '../services/merchandiseService';
 import foodService from '../services/foodService';
+import contactService from '../services/contactService';
 import ShowtimeManagement from '../components/ShowtimeManagement';
 import './AdminDashboard.css';
 
@@ -15,6 +16,8 @@ function AdminDashboard() {
   const [movies, setMovies] = useState([]);
   const [merchandise, setMerchandise] = useState([]);
   const [foods, setFoods] = useState([]);
+  const [contacts, setContacts] = useState([]);
+  const [selectedContact, setSelectedContact] = useState(null);
   
   // Movie Form State
   const [showAddMovie, setShowAddMovie] = useState(false);
@@ -63,6 +66,7 @@ function AdminDashboard() {
     loadMovies();
     loadMerchandise();
     loadFoods();
+    loadContacts();
   }, []);
 
   const loadMovies = async () => {
@@ -93,6 +97,55 @@ function AdminDashboard() {
       console.error('Error loading foods:', error);
       setFoods([]);
     }
+  };
+
+  const loadContacts = async () => {
+    try {
+      const response = await contactService.getAllContacts();
+      setContacts(Array.isArray(response) ? response : []);
+    } catch (error) {
+      console.error('Error loading contacts:', error);
+      setContacts([]);
+    }
+  };
+
+  const handleUpdateContactStatus = async (id, status) => {
+    try {
+      await contactService.updateContactStatus(id, status);
+      loadContacts();
+      if (selectedContact && selectedContact.id === id) {
+        setSelectedContact({ ...selectedContact, status });
+      }
+    } catch (error) {
+      alert('Error updating contact status: ' + (error.response?.data?.message || 'Unknown error'));
+    }
+  };
+
+  const handleDeleteContact = async (id) => {
+    if (window.confirm('Are you sure you want to delete this contact message?')) {
+      try {
+        await contactService.deleteContact(id);
+        alert('Contact deleted successfully!');
+        loadContacts();
+        if (selectedContact && selectedContact.id === id) {
+          setSelectedContact(null);
+        }
+      } catch (error) {
+        alert('Error deleting contact: ' + (error.response?.data?.message || 'Unknown error'));
+      }
+    }
+  };
+
+  const formatDate = (dateString) => {
+    if (!dateString) return 'N/A';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', { 
+      year: 'numeric', 
+      month: 'short', 
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
   };
 
   const handleInputChange = (e) => {
@@ -319,6 +372,16 @@ function AdminDashboard() {
             <span className="nav-text">Food & Drinks</span>
           </button>
           <button 
+            className={`nav-item ${activeTab === 'contacts' ? 'active' : ''}`}
+            onClick={() => setActiveTab('contacts')}
+          >
+            <span className="nav-icon">📧</span>
+            <span className="nav-text">Contact Messages</span>
+            {contacts.filter(c => c.status === 'NEW').length > 0 && (
+              <span className="badge-count">{contacts.filter(c => c.status === 'NEW').length}</span>
+            )}
+          </button>
+          <button 
             className={`nav-item ${activeTab === 'offers' ? 'active' : ''}`}
             onClick={() => setActiveTab('offers')}
           >
@@ -344,6 +407,7 @@ function AdminDashboard() {
             {activeTab === 'showtimes' && '🎞️ Showtime Management'}
             {activeTab === 'merchandise' && '🛍️ Merchandise Management'}
             {activeTab === 'foods' && '🍿 Food & Beverage Management'}
+            {activeTab === 'contacts' && '📧 Contact Messages'}
             {activeTab === 'offers' && '🎁 Offers & Promotions'}
           </h1>
           <div className="header-actions">
@@ -879,6 +943,158 @@ function AdminDashboard() {
                 <p>Create special offers and promotions to attract more customers</p>
                 <button className="btn-secondary">Create First Offer</button>
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* Contact Messages Tab */}
+        {activeTab === 'contacts' && (
+          <div className="tab-content">
+            <div className="contacts-section">
+              <div className="section-header">
+                <h2>Contact Messages</h2>
+                <div className="contact-stats">
+                  <span className="stat-badge new">New: {contacts.filter(c => c.status === 'NEW').length}</span>
+                  <span className="stat-badge progress">In Progress: {contacts.filter(c => c.status === 'IN_PROGRESS').length}</span>
+                  <span className="stat-badge resolved">Resolved: {contacts.filter(c => c.status === 'RESOLVED').length}</span>
+                </div>
+              </div>
+
+              {contacts.length === 0 ? (
+                <div className="empty-state">
+                  <div className="empty-icon">📧</div>
+                  <h3>No Contact Messages</h3>
+                  <p>Contact messages from users will appear here</p>
+                </div>
+              ) : (
+                <div className="contacts-container">
+                  <div className="contacts-list">
+                    {contacts.map(contact => (
+                      <div 
+                        key={contact.id} 
+                        className={`contact-card ${selectedContact?.id === contact.id ? 'selected' : ''} ${contact.status}`}
+                        onClick={() => setSelectedContact(contact)}
+                      >
+                        <div className="contact-header">
+                          <h3>{contact.name}</h3>
+                          <span className={`status-badge ${contact.status}`}>
+                            {contact.status === 'NEW' && '🆕 New'}
+                            {contact.status === 'IN_PROGRESS' && '⏳ In Progress'}
+                            {contact.status === 'RESOLVED' && '✅ Resolved'}
+                          </span>
+                        </div>
+                        <div className="contact-subject">
+                          <strong>Subject:</strong> {contact.subject}
+                        </div>
+                        <div className="contact-preview">
+                          {contact.message?.substring(0, 80)}
+                          {contact.message?.length > 80 && '...'}
+                        </div>
+                        <div className="contact-meta">
+                          <span>📧 {contact.email}</span>
+                          <span>📅 {formatDate(contact.createdAt)}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {selectedContact && (
+                    <div className="contact-details">
+                      <div className="details-header">
+                        <h2>Message Details</h2>
+                        <button 
+                          className="btn-close" 
+                          onClick={() => setSelectedContact(null)}
+                        >
+                          ✕
+                        </button>
+                      </div>
+
+                      <div className="detail-section">
+                        <div className="detail-row">
+                          <span className="detail-label">Name:</span>
+                          <span className="detail-value">{selectedContact.name}</span>
+                        </div>
+                        <div className="detail-row">
+                          <span className="detail-label">Email:</span>
+                          <span className="detail-value">
+                            <a href={`mailto:${selectedContact.email}`}>{selectedContact.email}</a>
+                          </span>
+                        </div>
+                        <div className="detail-row">
+                          <span className="detail-label">Phone:</span>
+                          <span className="detail-value">
+                            <a href={`tel:${selectedContact.phone}`}>{selectedContact.phone}</a>
+                          </span>
+                        </div>
+                        <div className="detail-row">
+                          <span className="detail-label">Subject:</span>
+                          <span className="detail-value">{selectedContact.subject}</span>
+                        </div>
+                        <div className="detail-row">
+                          <span className="detail-label">Status:</span>
+                          <span className={`status-badge ${selectedContact.status}`}>
+                            {selectedContact.status}
+                          </span>
+                        </div>
+                        <div className="detail-row">
+                          <span className="detail-label">Submitted:</span>
+                          <span className="detail-value">{formatDate(selectedContact.createdAt)}</span>
+                        </div>
+                        {selectedContact.updatedAt && (
+                          <div className="detail-row">
+                            <span className="detail-label">Last Updated:</span>
+                            <span className="detail-value">{formatDate(selectedContact.updatedAt)}</span>
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="detail-section">
+                        <h3>Message</h3>
+                        <div className="message-content">
+                          {selectedContact.message}
+                        </div>
+                      </div>
+
+                      <div className="detail-actions">
+                        <h3>Actions</h3>
+                        <div className="action-buttons-group">
+                          {selectedContact.status !== 'NEW' && (
+                            <button 
+                              className="btn-action btn-new"
+                              onClick={() => handleUpdateContactStatus(selectedContact.id, 'NEW')}
+                            >
+                              Mark as New
+                            </button>
+                          )}
+                          {selectedContact.status !== 'IN_PROGRESS' && (
+                            <button 
+                              className="btn-action btn-progress"
+                              onClick={() => handleUpdateContactStatus(selectedContact.id, 'IN_PROGRESS')}
+                            >
+                              Mark as In Progress
+                            </button>
+                          )}
+                          {selectedContact.status !== 'RESOLVED' && (
+                            <button 
+                              className="btn-action btn-resolved"
+                              onClick={() => handleUpdateContactStatus(selectedContact.id, 'RESOLVED')}
+                            >
+                              Mark as Resolved
+                            </button>
+                          )}
+                          <button 
+                            className="btn-action btn-delete"
+                            onClick={() => handleDeleteContact(selectedContact.id)}
+                          >
+                            🗑️ Delete Message
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         )}
